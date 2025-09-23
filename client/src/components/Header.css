@@ -1,0 +1,48 @@
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #00838F;
+  color: white;
+  padding: 0 30px;
+  height: 60px;
+  width: 100%;
+}
+
+.main-header .logo {
+  display: flex;
+  align-items: center;
+}
+
+.main-header .logo i {
+  font-size: 2rem;
+  margin-right: 10px;
+}
+
+.main-header .logo h1 {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.main-nav {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.nav-link.active {
+  background-color: #FF9800; /* Laranja para destacar a página ativa */
+  font-weight: 700;
+}
