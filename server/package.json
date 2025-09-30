@@ -2,13 +2,17 @@
   "name": "odin-server",
   "version": "1.0.0",
   "description": "Proxy server for ODIN React app",
-  "main": "server.js",
+  "main": "server.ts",
   "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "axios": "^1.7.2",
-    "cors": "^2.8.5",
-    "express": "^4.19.2"
+  "start": "node dist/server.js",
+  "dev": "ts-node server.ts",
+  "build": "tsc"
+},
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.6.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
