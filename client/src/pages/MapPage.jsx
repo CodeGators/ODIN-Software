@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import { getCollections, searchStac, getItemDetails } from '../services/api';
+import './MapPage.css';
+
 
 function MapClickHandler({ onMapClick, selectedCoords }) {
   useMapEvents({
@@ -14,9 +16,11 @@ function MapClickHandler({ onMapClick, selectedCoords }) {
 const MapPage = ({ searchResults, setSearchResults, setSelectedItemDetails }) => {
   const [collections, setCollections] = useState([]);
   const [selectedCoords, setSelectedCoords] = useState(null);
-  const [latDisplay, setLatDisplay] = useState('--.--');
-  const [lonDisplay, setLonDisplay] = useState('--.--');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Estados para o novo filtro
+  const [selectedSatellites, setSelectedSatellites] = useState([]);
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     getCollections()
@@ -26,8 +30,25 @@ const MapPage = ({ searchResults, setSearchResults, setSelectedItemDetails }) =>
 
   const handleMapClick = (latlng) => {
     setSelectedCoords(latlng);
-    setLatDisplay(latlng.lat.toFixed(4));
-    setLonDisplay(latlng.lng.toFixed(4));
+  };
+
+  const handleSatelliteChange = (event) => {
+    const { value, checked } = event.target;
+    if (checked) {
+      setSelectedSatellites(prev => [...prev, value]);
+    } else {
+      setSelectedSatellites(prev => prev.filter(id => id !== value));
+    }
+  };
+  
+  // NOVA FUNÇÃO ADICIONADA
+  const handleSelectAll = (event) => {
+    if (event.target.checked) {
+      const allCollectionIds = collections.map(c => c.id);
+      setSelectedSatellites(allCollectionIds);
+    } else {
+      setSelectedSatellites([]);
+    }
   };
   
   const handleSearch = async (event) => {
@@ -36,19 +57,16 @@ const MapPage = ({ searchResults, setSearchResults, setSelectedItemDetails }) =>
       alert("Selecione um ponto no mapa.");
       return;
     }
+    if (selectedSatellites.length === 0) {
+      alert("Selecione pelo menos um satélite.");
+      return;
+    }
 
     setIsLoading(true);
     setSearchResults([]);
 
     const formData = new FormData(event.target);
-    const selectedSatelite = formData.get('satelites');
-    
-    let collectionsToSend;
-    if (selectedSatelite === 'all') {
-      collectionsToSend = collections.map(c => c.id);
-    } else {
-      collectionsToSend = [selectedSatelite];
-    }
+    const collectionsToSend = selectedSatellites;
     
     const searchPayload = {
       latitude: selectedCoords.lat,
@@ -82,16 +100,55 @@ const MapPage = ({ searchResults, setSearchResults, setSelectedItemDetails }) =>
     <div className="main-container" style={{ height: '100%' }}>
       <aside className="sidebar">
         <div className="filter-header">
-            {/* Opcional: Adicionar lat/lon aqui se desejar */}
         </div>
         <form className="filter-form" onSubmit={handleSearch}>
-          <label htmlFor="satelite-select">Satélite Desejado</label>
-          <select id="satelite-select" name="satelites">
-            <option value="all">Todos os Satélites</option>
-            {collections.map(col => (
-              <option key={col.id} value={col.id}>{col.title}</option>
-            ))}
-          </select>
+          
+          <div className="custom-dropdown-container">
+            <label>Satélite Desejado</label>
+            <button 
+              type="button" 
+              className="dropdown-button" 
+              onClick={() => setDropdownOpen(!isDropdownOpen)}
+            >
+              <span>
+                {selectedSatellites.length === 0 
+                  ? 'Selecione um ou mais satélites' 
+                  : `${selectedSatellites.length} satélite(s) selecionado(s)`}
+              </span>
+              <span>{isDropdownOpen ? '▲' : '▼'}</span>
+            </button>
+
+            {isDropdownOpen && (
+              <div className="dropdown-list">
+                <ul>
+                  {/* JSX ATUALIZADO AQUI */}
+                  <li>
+                    <input 
+                      type="checkbox" 
+                      id="select-all"
+                      checked={collections.length > 0 && collections.length === selectedSatellites.length}
+                      onChange={handleSelectAll}
+                    />
+                    <label htmlFor="select-all"><strong>Selecionar Todos</strong></label>
+                  </li>
+
+                  {collections.map(col => (
+                    <li key={col.id}>
+                      <input 
+                        type="checkbox" 
+                        id={col.id} 
+                        value={col.id}
+                        checked={selectedSatellites.includes(col.id)}
+                        onChange={handleSatelliteChange}
+                      />
+                      <label htmlFor={col.id}>{col.title}</label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
           <div className="date-inputs">
             <div className="date-field">
               <label htmlFor="start-date">Data de Início</label>
