@@ -1,0 +1,240 @@
+[{
+  "_id": {
+    "$oid": "68dc66c464544db4ccf80dce"
+  },
+  "STAC_ID": "AMZ1-WFI-20250920-001",
+  "URL_IMAGEM": "https://brazil-stac.s3.sa-east-1.amazonaws.com/AMZ1-WFI/AMZ1-WFI-20250920-001.tif",
+  "DATA_CAPTURA": {
+    "$date": "2025-09-20T14:30:00.000Z"
+  },
+  "LOCALIZACAO": {
+    "latitude": -14.235,
+    "longitude": -51.925,
+    "cidade": "São Félix do Xingu"
+  },
+  "METADADOS_STAC": {
+    "PORCENTAGEM_NUVENS": 3.5,
+    "NDVI": 0.85,
+    "EVI": 0.62
+  },
+  "RELACIONAMENTO": {
+    "COLECAO_STAC_ID": "AMZ1-WFI-L4-SR-1",
+    "SERIE_TEMPORAL_ID": null
+  }
+},
+{
+  "_id": {
+    "$oid": "68dc66c464544db4ccf80dcf"
+  },
+  "STAC_ID": "AMZ1-WFI-20250615-002",
+  "URL_IMAGEM": "https://brazil-stac.s3.sa-east-1.amazonaws.com/AMZ1-WFI/AMZ1-WFI-20250615-002.tif",
+  "DATA_CAPTURA": {
+    "$date": "2025-06-15T10:15:00.000Z"
+  },
+  "LOCALIZACAO": {
+    "latitude": -18.91,
+    "longitude": -48.27,
+    "cidade": "Uberlândia"
+  },
+  "METADADOS_STAC": {
+    "PORCENTAGEM_NUVENS": 15,
+    "NDVI": 0.55,
+    "EVI": 0.38
+  },
+  "RELACIONAMENTO": {
+    "COLECAO_STAC_ID": "AMZ1-WFI-L4-SR-1",
+    "SERIE_TEMPORAL_ID": null
+  }
+},
+{
+  "_id": {
+    "$oid": "68dc66c464544db4ccf80dd0"
+  },
+  "STAC_ID": "MERGE-PREC-20250929",
+  "URL_IMAGEM": "https://brazil-stac.s3.sa-east-1.amazonaws.com/MERGE/MERGE-PREC-20250929.grib2",
+  "DATA_CAPTURA": {
+    "$date": "2025-09-29T00:00:00.000Z"
+  },
+  "LOCALIZACAO": {
+    "latitude": -5.09,
+    "longitude": -42.82,
+    "cidade": "Teresina"
+  },
+  "METADADOS_STAC": {
+    "PRECIPITACAO_MEDIA_MM": 50.2,
+    "PORCENTAGEM_NUVENS": 80,
+    "NDVI": null
+  },
+  "RELACIONAMENTO": {
+    "COLECAO_STAC_ID": "prec_merge_daily-1",
+    "SERIE_TEMPORAL_ID": null
+  }
+},
+{
+  "_id": {
+    "$oid": "68dc66c464544db4ccf80dd1"
+  },
+  "STAC_ID": "AMZ1-WFI-20250925-003",
+  "URL_IMAGEM": "https://brazil-stac.s3.sa-east-1.amazonaws.com/AMZ1-WFI/AMZ1-WFI-20250925-003.tif",
+  "DATA_CAPTURA": {
+    "$date": "2025-09-25T13:45:00.000Z"
+  },
+  "LOCALIZACAO": {
+    "latitude": -9,
+    "longitude": -60,
+    "cidade": "Novo Mundo"
+  },
+  "METADADOS_STAC": {
+    "PORCENTAGEM_NUVENS": 0.5,
+    "NDVI": 0.2,
+    "EVI": 0.15
+  },
+  "RELACIONAMENTO": {
+    "COLECAO_STAC_ID": "AMZ1-WFI-L4-SR-1",
+    "SERIE_TEMPORAL_ID": null
+  }
+},
+{
+  "_id": {
+    "$oid": "68dc66c464544db4ccf80dd2"
+  },
+  "STAC_ID": "MERGE-PREC-20250701",
+  "URL_IMAGEM": "https://brazil-stac.s3.sa-east-1.amazonaws.com/MERGE/MERGE-PREC-20250701.grib2",
+  "DATA_CAPTURA": {
+    "$date": "2025-07-01T00:00:00.000Z"
+  },
+  "LOCALIZACAO": {
+    "latitude": -23.55,
+    "longitude": -46.63,
+    "cidade": "São Paulo"
+  },
+  "METADADOS_STAC": {
+    "PRECIPITACAO_MEDIA_MM": 0.8,
+    "PORCENTAGEM_NUVENS": 5,
+    "NDVI": null
+  },
+  "RELACIONAMENTO": {
+    "COLECAO_STAC_ID": "prec_merge_daily-1",
+    "SERIE_TEMPORAL_ID": null
+  }
+},
+{
+  "_id": {
+    "$oid": "68dc6c0a4e1482d91318a630"
+  },
+  "STAC_ID": "AMZ1-WFI-20250930-004",
+  "URL_IMAGEM": "https://brazil-stac.s3.sa-east-1.amazonaws.com/AMZ1-WFI/AMZ1-WFI-20250930-004.tif",
+  "DATA_CAPTURA": {
+    "$date": "2025-09-30T10:00:00.000Z"
+  },
+  "LOCALIZACAO": {
+    "latitude": -23,
+    "longitude": -45,
+    "cidade": "Taubaté"
+  },
+  "METADADOS_STAC": {
+    "PORCENTAGEM_NUVENS": 5,
+    "NDVI": 0.12,
+    "EVI": 0.08
+  },
+  "RELACIONAMENTO": {
+    "COLECAO_STAC_ID": "AMZ1-WFI-L4-SR-1",
+    "SERIE_TEMPORAL_ID": null
+  }
+},
+{
+  "_id": {
+    "$oid": "68dc6c0a4e1482d91318a631"
+  },
+  "STAC_ID": "AMZ1-WFI-20251001-005",
+  "URL_IMAGEM": "https://brazil-stac.s3.sa-east-1.amazonaws.com/AMZ1-WFI/AMZ1-WFI-20251001-005.tif",
+  "DATA_CAPTURA": {
+    "$date": "2025-10-01T14:00:00.000Z"
+  },
+  "LOCALIZACAO": {
+    "latitude": -5.5,
+    "longitude": -60.5,
+    "cidade": "Manaus"
+  },
+  "METADADOS_STAC": {
+    "PORCENTAGEM_NUVENS": 0,
+    "NDVI": 0.92,
+    "EVI": 0.68
+  },
+  "RELACIONAMENTO": {
+    "COLECAO_STAC_ID": "AMZ1-WFI-L4-SR-1",
+    "SERIE_TEMPORAL_ID": null
+  }
+},
+{
+  "_id": {
+    "$oid": "68dc6c0a4e1482d91318a632"
+  },
+  "STAC_ID": "MERGE-PREC-20250928",
+  "URL_IMAGEM": "https://brazil-stac.s3.sa-east-1.amazonaws.com/MERGE/MERGE-PREC-20250928.grib2",
+  "DATA_CAPTURA": {
+    "$date": "2025-09-28T00:00:00.000Z"
+  },
+  "LOCALIZACAO": {
+    "latitude": -28.5,
+    "longitude": -50,
+    "cidade": "Lages"
+  },
+  "METADADOS_STAC": {
+    "PRECIPITACAO_MEDIA_MM": 85,
+    "PORCENTAGEM_NUVENS": 95,
+    "NDVI": null
+  },
+  "RELACIONAMENTO": {
+    "COLECAO_STAC_ID": "prec_merge_daily-1",
+    "SERIE_TEMPORAL_ID": null
+  }
+},
+{
+  "_id": {
+    "$oid": "68dc6c0a4e1482d91318a633"
+  },
+  "STAC_ID": "AMZ1-WFI-20251002-006",
+  "URL_IMAGEM": "https://brazil-stac.s3.sa-east-1.amazonaws.com/AMZ1-WFI/AMZ1-WFI-20251002-006.tif",
+  "DATA_CAPTURA": {
+    "$date": "2025-10-02T11:30:00.000Z"
+  },
+  "LOCALIZACAO": {
+    "latitude": -10,
+    "longitude": -40,
+    "cidade": "Salvador"
+  },
+  "METADADOS_STAC": {
+    "PORCENTAGEM_NUVENS": 75,
+    "NDVI": 0.4,
+    "EVI": 0.25
+  },
+  "RELACIONAMENTO": {
+    "COLECAO_STAC_ID": "AMZ1-WFI-L4-SR-1",
+    "SERIE_TEMPORAL_ID": null
+  }
+},
+{
+  "_id": {
+    "$oid": "68dc6c0a4e1482d91318a634"
+  },
+  "STAC_ID": "MERGE-PREC-20250720",
+  "URL_IMAGEM": "https://brazil-stac.s3.sa-east-1.amazonaws.com/MERGE/MERGE-PREC-20250720.grib2",
+  "DATA_CAPTURA": {
+    "$date": "2025-07-20T00:00:00.000Z"
+  },
+  "LOCALIZACAO": {
+    "latitude": -7.5,
+    "longitude": -39.5,
+    "cidade": "Jacarei"
+  },
+  "METADADOS_STAC": {
+    "PRECIPITACAO_MEDIA_MM": 0.1,
+    "PORCENTAGEM_NUVENS": 0,
+    "NDVI": null
+  },
+  "RELACIONAMENTO": {
+    "COLECAO_STAC_ID": "prec_merge_daily-1",
+    "SERIE_TEMPORAL_ID": null
+  }
+}]
