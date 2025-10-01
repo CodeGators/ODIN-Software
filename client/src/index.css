@@ -1,0 +1,277 @@
+/* Conteúdo completo para index.css */
+
+/* 1. FUNDAMENTO DO TEMA */
+:root {
+  --cor-primaria: #00838F;
+  --cor-primaria-dark: #006064;
+  --cor-realce: #FF9800;
+  --cor-realce-hover: #F57C00;
+  --fundo-claro: #f4f7f9;
+  --fundo-sidebar: #E0F7FA;
+  --branco: #ffffff;
+  --texto-escuro: #333;
+  --texto-cinza: #666;
+  --borda-suave: #e0e0e0;
+  --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --raio-borda: 8px;
+}
+
+/* 2. CONFIGURAÇÕES GLOBAIS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #eef2f5;
+  color: var(--texto-escuro);
+  overflow: hidden;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.page-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  height: calc(100vh - 60px);
+}
+
+/* 3. LAYOUT DA PÁGINA DO MAPA */
+.main-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.sidebar {
+  width: 360px;
+  flex-shrink: 0;
+  background-color: var(--fundo-sidebar);
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  border-right: 1px solid var(--borda-suave);
+}
+
+.map-container {
+  flex-grow: 1;
+  height: 100%;
+  position: relative;
+}
+
+/* 4. FORMULÁRIO DE FILTROS APRIMORADO */
+.filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background-color: var(--branco);
+  padding: 1.5rem;
+  border-radius: var(--raio-borda);
+  box-shadow: var(--sombra-suave);
+  margin-bottom: 2rem;
+}
+
+.filter-form label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cor-primaria-dark);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.filter-form input[type="date"],
+.filter-form .dropdown-button {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 0.95rem;
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--raio-borda);
+  background-color: var(--fundo-claro);
+  font-family: 'Roboto', sans-serif;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.filter-form input[type="date"]:focus,
+.filter-form .dropdown-button:focus {
+  outline: none;
+  border-color: var(--cor-realce);
+  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.2);
+  background-color: var(--branco);
+}
+
+.date-inputs .date-field {
+  width: 100%;
+}
+
+/* NOVO: Adiciona um espaço APENAS abaixo do primeiro campo de data */
+.date-inputs .date-field:first-child {
+  margin-bottom: 1.5rem;
+}
+
+
+.search-button {
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  background-image: linear-gradient(to right, var(--cor-realce), var(--cor-realce-hover));
+  color: var(--branco);
+  border: none;
+  border-radius: var(--raio-borda);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 1rem;
+}
+
+.search-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.search-button:disabled {
+  background-image: none;
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 5. DROPDOWN E LISTA DE RESULTADOS */
+.custom-dropdown-container {
+  position: relative;
+}
+
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--branco);
+  border: 1px solid var(--borda-suave);
+  border-top: none;
+  border-radius: 0 0 var(--raio-borda) var(--raio-borda);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: var(--sombra-suave);
+}
+.dropdown-list ul { list-style: none; margin: 0; padding: 0; }
+.dropdown-list li { padding: 0.6rem 0.75rem; cursor: pointer; display: flex; align-items: center; transition: background-color 0.2s; }
+.dropdown-list li:hover { background-color: var(--fundo-claro); }
+.dropdown-list input[type="checkbox"] { margin-right: 10px; }
+.dropdown-list label { font-size: 1rem; font-weight: normal; color: #333; user-select: none; }
+
+
+.results-section {
+  padding: 1.5rem;
+  background-color: var(--branco);
+  border-radius: var(--raio-borda);
+  box-shadow: var(--sombra-suave);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#search-results-list {
+  overflow-y: auto;
+  flex-grow: 1;
+  padding-right: 10px;
+}
+
+.results-section h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--cor-primaria-dark);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--cor-realce);
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  background-color: var(--branco);
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--raio-borda);
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-left: 4px solid var(--borda-suave);
+  transition: transform 0.2s, box-shadow 0.2s, border-left-color 0.2s;
+}
+
+.result-item:hover {
+  transform: translateX(5px);
+  box-shadow: var(--sombra-suave);
+  border-left-color: var(--cor-realce);
+}
+
+.img-placeholder {
+  width: 60px;
+  height: 60px;
+  background-color: var(--fundo-claro);
+  color: var(--cor-primaria);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  border-radius: var(--raio-borda);
+  margin-right: 15px;
+  flex-shrink: 0;
+  font-size: 1.8rem;
+}
+.result-info { display: flex; flex-direction: column; }
+.result-info strong { font-size: 1rem; margin-bottom: 4px; }
+.result-info small { font-size: 0.8rem; color: var(--texto-cinza); }
+
+/* 6. ESTILOS GERAIS (PÁGINAS, TABELAS, GRÁFICOS) */
+#map-info-box { position: absolute; bottom: 20px; left: 380px; width: 300px; background-color: var(--branco); border-radius: var(--raio-borda); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); z-index: 1000; padding: 15px; font-size: 0.9rem; color: var(--texto-escuro); }
+#map-info-box img { width: 100%; height: auto; border-radius: 4px; margin-bottom: 10px; }
+#map-info-box h4 { margin: 0 0 10px 0; font-size: 1rem; color: var(--cor-primaria); }
+#map-info-box p { margin: 4px 0; }
+.page-container { padding: 30px; max-width: 1200px; margin: 0 auto; }
+.page-container h1 { font-size: 2rem; color: var(--texto-escuro); margin-bottom: 10px; }
+.page-container p { font-size: 1.1rem; color: var(--texto-cinza); margin-bottom: 30px; }
+.table-container { overflow-x: auto; background-color: var(--branco); border-radius: var(--raio-borda); box-shadow: var(--sombra-suave); border: 1px solid var(--borda-suave); }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--borda-suave); }
+th { background-color: var(--fundo-claro); font-weight: 700; color: var(--texto-cinza); text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85rem; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) { background-color: var(--fundo-claro); }
+.download-button-table { background-color: var(--cor-primaria); color: var(--branco); border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; font-weight: 500; }
+.download-button-table:hover { background-color: var(--cor-primaria-dark); }
+.charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; }
+.chart-container, .no-results-box { background-color: var(--branco); padding: 20px; border-radius: var(--raio-borda); box-shadow: var(--sombra-suave); border: 1px solid var(--borda-suave); }
+.chart-container h3 { text-align: center; margin-bottom: 20px; color: var(--texto-escuro); }
+.no-results-box { text-align: center; padding: 50px; border-style: dashed; }
+.no-results-box h3 { color: var(--texto-escuro); font-size: 1.5rem; }
+.no-results-box p { color: var(--texto-cinza); }
+
+/* 7. ESTILO DA BARRA DE ROLAGEM (SCROLLBAR) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--fundo-claro);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--cor-primaria);
+  border-radius: 10px;
+  border: 2px solid var(--fundo-claro);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--cor-primaria-dark);
+}
