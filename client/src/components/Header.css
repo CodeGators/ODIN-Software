@@ -1,0 +1,99 @@
+/* Conteúdo completo e aprimorado para Header.css */
+
+/* Animação de entrada suave para o header */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--cor-primaria);
+  color: var(--branco);
+  padding: 0 35px;
+  height: 70px; /* ALTERADO: Aumentado para acomodar a logo maior */
+  width: 100%;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  animation: fadeInDown 0.5s ease-out;
+}
+
+.main-header .logo {
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.main-header .logo:hover {
+  transform: scale(1.05);
+}
+
+.logo-image {
+  height: 160px; /* ALTERADO: Imagem aumentada de 40px para 50px */
+  width: auto;
+  margin-right: 15px;
+  margin-top: 15px;
+}
+
+
+.main-header .logo h1 {
+  font-family: var(--font-heading);
+  font-size: 2rem; /* ALTERADO: Levemente aumentado para balancear com a nova logo */
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.main-nav {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link {
+  color: var(--branco);
+  text-decoration: none;
+  padding: 10px 5px;
+  border-radius: var(--raio-borda);
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 500;
+  position: relative;
+  opacity: 0.8;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.nav-link:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background-color: var(--cor-realce);
+  border-radius: 2px;
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active {
+  font-weight: 700;
+  opacity: 1;
+}
+
+.nav-link.active::after {
+  width: 100%;
+}
