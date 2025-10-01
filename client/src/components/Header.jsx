@@ -1,12 +1,17 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import './Header.css'; // Vamos criar este CSS
+import './Header.css';
 
 const Header = () => {
   return (
     <header className="main-header">
       <div className="logo">
-        <i className="fa-regular fa-eye"></i>
+        {/* CORRIGIDO: O nome do arquivo foi atualizado para odin_logo.png */}
+        <img 
+          src="/odin_logo.png" 
+          alt="Logo ODIN" 
+          className="logo-image" 
+        />
         <h1>ODIN</h1>
       </div>
       <nav className="main-nav">

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import { getCollections, searchStac, getItemDetails } from '../services/api';
-import './MapPage.css';
 
 
 function MapClickHandler({ onMapClick, selectedCoords }) {
