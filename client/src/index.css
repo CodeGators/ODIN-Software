@@ -25,7 +25,7 @@
 
 body {
   font-family: 'Roboto', sans-serif;
-  background-color: #eef2f5;
+  background-color: var(--fundo-sidebar); /* ALTERADO: Cor de fundo principal agora é a mesma da sidebar */
   color: var(--texto-escuro);
   overflow: hidden;
 }
@@ -111,7 +111,6 @@ body {
   width: 100%;
 }
 
-/* NOVO: Adiciona um espaço APENAS abaixo do primeiro campo de data */
 .date-inputs .date-field:first-child {
   margin-bottom: 1.5rem;
 }

@@ -1,7 +1,18 @@
+// Arquivo: MapPage.jsx
+
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import { getCollections, searchStac, getItemDetails } from '../services/api';
 
+function MapUpdater({ coords }) {
+  const map = useMap();
+  useEffect(() => {
+    if (coords && coords.lat != null && coords.lng != null) {
+      map.flyTo([coords.lat, coords.lng], map.getZoom());
+    }
+  }, [coords, map]);
+  return null;
+}
 
 function MapClickHandler({ onMapClick, selectedCoords }) {
   useMapEvents({
@@ -12,21 +23,26 @@ function MapClickHandler({ onMapClick, selectedCoords }) {
   return selectedCoords ? <Marker position={selectedCoords} /> : null;
 }
 
-const MapPage = ({ searchResults, setSearchResults, setSelectedItemDetails }) => {
+const MapPage = ({ 
+  searchResults, 
+  setSearchResults, 
+  setSelectedItemDetails,
+  selectedCoords,      // Prop vinda do App
+  setSelectedCoords  // Prop vinda do App
+}) => {
   const [collections, setCollections] = useState([]);
-  const [selectedCoords, setSelectedCoords] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Estados para o novo filtro
   const [selectedSatellites, setSelectedSatellites] = useState([]);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     getCollections()
       .then(response => setCollections(response.data))
       .catch(error => console.error('Erro ao carregar coleções:', error));
   }, []);
-
+  
   const handleMapClick = (latlng) => {
     setSelectedCoords(latlng);
   };
@@ -39,8 +55,7 @@ const MapPage = ({ searchResults, setSearchResults, setSelectedItemDetails }) =>
       setSelectedSatellites(prev => prev.filter(id => id !== value));
     }
   };
-  
-  // NOVA FUNÇÃO ADICIONADA
+
   const handleSelectAll = (event) => {
     if (event.target.checked) {
       const allCollectionIds = collections.map(c => c.id);
@@ -49,11 +64,11 @@ const MapPage = ({ searchResults, setSearchResults, setSelectedItemDetails }) =>
       setSelectedSatellites([]);
     }
   };
-  
+
   const handleSearch = async (event) => {
     event.preventDefault();
-    if (!selectedCoords) {
-      alert("Selecione um ponto no mapa.");
+    if (!selectedCoords || selectedCoords.lat === null || selectedCoords.lng === null) {
+      alert("Selecione um ponto no mapa ou preencha a latitude e longitude.");
       return;
     }
     if (selectedSatellites.length === 0) {
@@ -63,16 +78,13 @@ const MapPage = ({ searchResults, setSearchResults, setSelectedItemDetails }) =>
 
     setIsLoading(true);
     setSearchResults([]);
-
-    const formData = new FormData(event.target);
-    const collectionsToSend = selectedSatellites;
     
     const searchPayload = {
       latitude: selectedCoords.lat,
       longitude: selectedCoords.lng,
-      collections: collectionsToSend,
-      startDate: formData.get('start-date'),
-      endDate: formData.get('end-date'),
+      collections: selectedSatellites,
+      startDate: startDate,
+      endDate: endDate,
     };
 
     try {
@@ -98,44 +110,39 @@ const MapPage = ({ searchResults, setSearchResults, setSelectedItemDetails }) =>
   return (
     <div className="main-container" style={{ height: '100%' }}>
       <aside className="sidebar">
-        <div className="filter-header">
-        </div>
         <form className="filter-form" onSubmit={handleSearch}>
           
           <div className="custom-dropdown-container">
             <label>Satélite Desejado</label>
-            <button 
-              type="button" 
-              className="dropdown-button" 
+            <button
+              type="button"
+              className="dropdown-button"
               onClick={() => setDropdownOpen(!isDropdownOpen)}
             >
               <span>
-                {selectedSatellites.length === 0 
-                  ? 'Selecione um ou mais satélites' 
+                {selectedSatellites.length === 0
+                  ? 'Selecione um ou mais satélites'
                   : `${selectedSatellites.length} satélite(s) selecionado(s)`}
               </span>
               <span>{isDropdownOpen ? '▲' : '▼'}</span>
             </button>
-
             {isDropdownOpen && (
               <div className="dropdown-list">
                 <ul>
-                  {/* JSX ATUALIZADO AQUI */}
                   <li>
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       id="select-all"
                       checked={collections.length > 0 && collections.length === selectedSatellites.length}
                       onChange={handleSelectAll}
                     />
                     <label htmlFor="select-all"><strong>Selecionar Todos</strong></label>
                   </li>
-
                   {collections.map(col => (
                     <li key={col.id}>
-                      <input 
-                        type="checkbox" 
-                        id={col.id} 
+                      <input
+                        type="checkbox"
+                        id={col.id}
                         value={col.id}
                         checked={selectedSatellites.includes(col.id)}
                         onChange={handleSatelliteChange}
@@ -147,17 +154,32 @@ const MapPage = ({ searchResults, setSearchResults, setSelectedItemDetails }) =>
               </div>
             )}
           </div>
-
+          
           <div className="date-inputs">
             <div className="date-field">
               <label htmlFor="start-date">Data de Início</label>
-              <input type="date" id="start-date" name="start-date" />
+              <input
+                type="date"
+                id="start-date"
+                name="start-date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
             </div>
             <div className="date-field">
               <label htmlFor="end-date">Data de Fim</label>
-              <input type="date" id="end-date" name="end-date" />
+              <input
+                type="date"
+                id="end-date"
+                name="end-date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
             </div>
           </div>
+          
+          {/* OS INPUTS DE LOCALIZAÇÃO FORAM REMOVIDOS DAQUI */}
+          
           <button type="submit" className="search-button" disabled={isLoading}>
             {isLoading ? 'Buscando...' : 'Buscar Dados'}
           </button>
@@ -191,6 +213,7 @@ const MapPage = ({ searchResults, setSearchResults, setSelectedItemDetails }) =>
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
           <MapClickHandler onMapClick={handleMapClick} selectedCoords={selectedCoords} />
+          <MapUpdater coords={selectedCoords} />
         </MapContainer>
       </main>
     </div>

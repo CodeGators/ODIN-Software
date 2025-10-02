@@ -36,10 +36,10 @@
 }
 
 .logo-image {
-  height: 160px; /* ALTERADO: Imagem aumentada de 40px para 50px */
+  height: 100px; /* ALTERADO: Imagem aumentada de 40px para 50px */
   width: auto;
   margin-right: 15px;
-  margin-top: 15px;
+  margin-top: -33px;
 }
 
 
@@ -96,4 +96,65 @@
 
 .nav-link.active::after {
   width: 100%;
+}
+
+/* --- ESTILOS PARA INPUTS DE COORDENADAS NO HEADER --- */
+
+.location-inputs-header {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  /* Centraliza os inputs no espaço disponível entre a logo e a navegação */
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.location-field-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.location-field-header label {
+  color: var(--branco);
+  opacity: 0.8;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.location-field-header input {
+  background-color: var(--cor-primaria-dark); /* Fundo escuro que combina com o header */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--branco);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem;
+  width: 180px; /* Largura dos campos */
+  transition: all 0.3s ease;
+}
+
+.location-field-header input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.location-field-header input:focus {
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-color: var(--cor-realce);
+  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.5);
+}
+
+/* Para remover as setas do input de número (Chrome, Safari, Edge) */
+.location-field-header input::-webkit-outer-spin-button,
+.location-field-header input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Para remover as setas do input de número (Firefox) */
+.location-field-header input[type=number] {
+  -moz-appearance: textfield;
 }
