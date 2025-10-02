@@ -76,7 +76,7 @@ app.post('/stac-search', async (req: Request<{}, {}, StacSearchRequestBody>, res
         const searchPayload: StacSearchPayload = {
             "collections": collections,
             "intersects": { "type": "Point", "coordinates": [longitude, latitude] },
-            "limit": 2500
+            "limit": 1000
         };
 
         if (startDate && endDate) {
@@ -85,7 +85,7 @@ app.post('/stac-search', async (req: Request<{}, {}, StacSearchRequestBody>, res
 
         const response = await axios.post<{ features: any[] }>(stacUrl, searchPayload);
 
-        // Mapeia os resultados para um formato mais simples
+        // Mapeia os resultados para um formato mais simples, agora incluindo a geometria
         const simplifiedFeatures = response.data.features.map(f => {
              const props = f.properties;
              const dateString: string | undefined = props.datetime || props.start_datetime || props.end_datetime;
@@ -94,6 +94,7 @@ app.post('/stac-search', async (req: Request<{}, {}, StacSearchRequestBody>, res
              return {
                 id: f.id,
                 collection: f.collection,
+                geometry: f.geometry, // CORREÇÃO APLICADA AQUI
                 date: date,
                 cloud_cover: props['eo:cloud_cover']
             };

@@ -1,7 +1,8 @@
 // Arquivo: MapPage.jsx
 
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+// 1. Importe o GeoJSON
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap, GeoJSON } from 'react-leaflet'; 
 import { getCollections, searchStac, getItemDetails } from '../services/api';
 
 function MapUpdater({ coords }) {
@@ -27,8 +28,8 @@ const MapPage = ({
   searchResults, 
   setSearchResults, 
   setSelectedItemDetails,
-  selectedCoords,      // Prop vinda do App
-  setSelectedCoords  // Prop vinda do App
+  selectedCoords,
+  setSelectedCoords
 }) => {
   const [collections, setCollections] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +37,10 @@ const MapPage = ({
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+
+  // 2. Adicione os estados para a geometria
+  const [selectedGeometry, setSelectedGeometry] = useState(null);
+  const [geoJsonKey, setGeoJsonKey] = useState(null);
 
   useEffect(() => {
     getCollections()
@@ -78,6 +83,7 @@ const MapPage = ({
 
     setIsLoading(true);
     setSearchResults([]);
+    setSelectedGeometry(null); // Limpa a geometria anterior a cada nova busca
     
     const searchPayload = {
       latitude: selectedCoords.lat,
@@ -98,12 +104,22 @@ const MapPage = ({
     }
   };
 
-  const handleResultClick = async (collection, itemId) => {
+  // 3. Modifique a função de clique no resultado
+  const handleResultClick = async (item) => {
+    // Define a geometria e a chave para forçar a re-renderização
+    if (item.geometry) {
+      setSelectedGeometry(item.geometry);
+      setGeoJsonKey(item.id);
+    } else {
+      setSelectedGeometry(null);
+    }
+
     try {
-        const response = await getItemDetails(collection, itemId);
+        const response = await getItemDetails(item.collection, item.id);
         setSelectedItemDetails(response.data);
     } catch (error) {
         console.error('Erro ao buscar detalhes do item:', error);
+        setSelectedItemDetails(null);
     }
   };
 
@@ -111,7 +127,6 @@ const MapPage = ({
     <div className="main-container" style={{ height: '100%' }}>
       <aside className="sidebar">
         <form className="filter-form" onSubmit={handleSearch}>
-          
           <div className="custom-dropdown-container">
             <label>Satélite Desejado</label>
             <button
@@ -178,8 +193,6 @@ const MapPage = ({
             </div>
           </div>
           
-          {/* OS INPUTS DE LOCALIZAÇÃO FORAM REMOVIDOS DAQUI */}
-          
           <button type="submit" className="search-button" disabled={isLoading}>
             {isLoading ? 'Buscando...' : 'Buscar Dados'}
           </button>
@@ -192,8 +205,9 @@ const MapPage = ({
             ) : searchResults.length === 0 ? (
               <p>Selecione um ponto e busque os dados.</p>
             ) : (
+              // 4. Altere o onClick para passar o item inteiro
               searchResults.map(feature => (
-                <div key={feature.id} className="result-item" onClick={() => handleResultClick(feature.collection, feature.id)}>
+                <div key={feature.id} className="result-item" onClick={() => handleResultClick(feature)}>
                   <div className="img-placeholder">IMG</div>
                   <div className="result-info">
                     <strong>{feature.collection}</strong>
@@ -214,6 +228,15 @@ const MapPage = ({
           />
           <MapClickHandler onMapClick={handleMapClick} selectedCoords={selectedCoords} />
           <MapUpdater coords={selectedCoords} />
+          
+          {/* 5. Adicione o componente GeoJSON para renderizar a geometria */}
+          {selectedGeometry && (
+            <GeoJSON 
+              key={geoJsonKey} 
+              data={selectedGeometry} 
+            />
+          )}
+
         </MapContainer>
       </main>
     </div>
