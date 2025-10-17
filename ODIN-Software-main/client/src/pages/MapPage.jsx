@@ -1,9 +1,35 @@
 // Arquivo: MapPage.jsx
 
 import React, { useState, useEffect } from 'react';
-// 1. Importe o GeoJSON
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap, GeoJSON } from 'react-leaflet'; 
 import { getCollections, searchStac, getItemDetails } from '../services/api';
+
+// --- INÍCIO DA SOLUÇÃO DO ÍCONE ---
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css'; // Garante que o CSS do Leaflet seja carregado
+
+// Bloco de código que corrige problemas comuns de carregamento de ícones no Leaflet com Vite/Webpack
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: iconRetinaUrl,
+    iconUrl: iconUrl,
+    shadowUrl: shadowUrl,
+});
+
+// Definição do seu ícone personalizado
+// Como a imagem está em 'public/images/pin-icon.png', o caminho é direto da raiz do site.
+const customIcon = new L.Icon({
+  iconUrl: '/images/pin-icon.png',
+  iconSize: [35, 35],       // Tamanho do ícone [largura, altura]
+  iconAnchor: [17, 35],      // Ponto do ícone que corresponde à localização no mapa (ponta inferior)
+});
+// --- FIM DA SOLUÇÃO DO ÍCONE ---
+
 
 function MapUpdater({ coords }) {
   const map = useMap();
@@ -15,13 +41,15 @@ function MapUpdater({ coords }) {
   return null;
 }
 
+// Função MapClickHandler modificada para usar o ícone personalizado
 function MapClickHandler({ onMapClick, selectedCoords }) {
   useMapEvents({
     click(e) {
       onMapClick(e.latlng);
     },
   });
-  return selectedCoords ? <Marker position={selectedCoords} /> : null;
+  // Adiciona a propriedade "icon" com o ícone customizado ao Marker
+  return selectedCoords ? <Marker position={selectedCoords} icon={customIcon} /> : null;
 }
 
 const MapPage = ({ 
@@ -38,7 +66,6 @@ const MapPage = ({
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
-  // 2. Adicione os estados para a geometria
   const [selectedGeometry, setSelectedGeometry] = useState(null);
   const [geoJsonKey, setGeoJsonKey] = useState(null);
 
@@ -48,21 +75,14 @@ const MapPage = ({
       .catch(error => console.error('Erro ao carregar coleções:', error));
   }, []);
   
-  // --- CÓDIGO DA SOLUÇÃO ADICIONADO AQUI ---
-  // Este useEffect executa uma função de limpeza quando o componente
-  // é desmontado (ou seja, quando o usuário navega para outra página).
   useEffect(() => {
     return () => {
-      // Limpa a geometria desenhada no mapa ao sair da página
       setSelectedGeometry(null);
-      
-      // Limpa os detalhes do item selecionado no componente pai para
-      // garantir que popups ou modais também desapareçam.
       if (setSelectedItemDetails) {
         setSelectedItemDetails(null);
       }
     };
-  }, [setSelectedItemDetails]); // Dependência para seguir as boas práticas do React.
+  }, [setSelectedItemDetails]);
 
   const handleMapClick = (latlng) => {
     setSelectedCoords(latlng);
@@ -99,7 +119,7 @@ const MapPage = ({
 
     setIsLoading(true);
     setSearchResults([]);
-    setSelectedGeometry(null); // Limpa a geometria anterior a cada nova busca
+    setSelectedGeometry(null);
     
     const searchPayload = {
       latitude: selectedCoords.lat,
@@ -120,9 +140,7 @@ const MapPage = ({
     }
   };
 
-  // 3. Modifique a função de clique no resultado
   const handleResultClick = async (item) => {
-    // Define a geometria e a chave para forçar a re-renderização
     if (item.geometry) {
       setSelectedGeometry(item.geometry);
       setGeoJsonKey(item.id);
@@ -138,6 +156,8 @@ const MapPage = ({
         setSelectedItemDetails(null);
     }
   };
+
+  const meuToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
   return (
     <div className="main-container" style={{ height: '100%' }}>
@@ -221,7 +241,6 @@ const MapPage = ({
             ) : searchResults.length === 0 ? (
               <p>Selecione um ponto e busque os dados.</p>
             ) : (
-              // 4. Altere o onClick para passar o item inteiro
               searchResults.map(feature => (
                 <div key={feature.id} className="result-item" onClick={() => handleResultClick(feature)}>
                   <div className="img-placeholder">IMG</div>
@@ -238,14 +257,13 @@ const MapPage = ({
       </aside>
       <main className="map-container">
         <MapContainer center={[-14.235, -51.925]} zoom={5} style={{ height: '100%', width: '100%' }}>
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
+            <TileLayer
+                url={`https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/tiles/{z}/{x}/{y}?access_token=${meuToken}`}
+                attribution='&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            />
           <MapClickHandler onMapClick={handleMapClick} selectedCoords={selectedCoords} />
           <MapUpdater coords={selectedCoords} />
           
-          {/* 5. Adicione o componente GeoJSON para renderizar a geometria */}
           {selectedGeometry && (
             <GeoJSON 
               key={geoJsonKey} 
