@@ -15,3 +15,9 @@ export const searchStac = (payload) => {
 export const getItemDetails = (collection, itemId) => {
   return apiClient.get(`/stac-item-details?collection=${collection}&itemId=${itemId}`);
 };
+
+// ADICIONE ESTA NOVA FUNÇÃO
+export const getTimeseries = (params) => {
+  // params: { coverage, latitude, longitude, attributes, startDate, endDate }
+  return apiClient.get('/wtss-timeseries', { params });
+};
