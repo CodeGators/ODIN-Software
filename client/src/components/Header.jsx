@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import './Header.css';
 
-// 1. RECEBEMOS AS PROPS VINDAS DO APP.JSX
+//RECEBEMOS AS PROPS VINDAS DO APP.JSX
 const Header = ({ selectedCoords, handleCoordinateChange }) => {
   return (
     <header className="main-header">
@@ -15,7 +15,7 @@ const Header = ({ selectedCoords, handleCoordinateChange }) => {
         <h1>ODIN</h1>
       </div>
 
-      {/* 2. ADICIONAMOS OS CAMPOS DE INPUT DE LOCALIZAÇÃO AQUI */}
+      {/*ADICIONAMOS OS CAMPOS DE INPUT DE LOCALIZAÇÃO AQUI */}
       <div className="location-inputs-header">
         <div className="location-field-header">
           <label htmlFor="latitude">Latitude</label>

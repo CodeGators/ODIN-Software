@@ -23,7 +23,7 @@ const TimeseriesChart = ({ timeseriesData }) => {
   const datasets = attributes.map((attr, index) => {
     // Alguns atributos (como NDVI/EVI) precisam ser escalados
     const needsScaling = ['NDVI', 'EVI'].includes(attr.attribute);
-    const values = attr.values.map(v => needsScaling ? v / 10000 : v);
+    const values = attr.values.map(v => (v === null || v === undefined) ? null : (needsScaling ? v / 10000 : v));
     
     return {
       label: attr.attribute,
@@ -31,6 +31,7 @@ const TimeseriesChart = ({ timeseriesData }) => {
       borderColor: chartColors[index % chartColors.length], // Pega uma cor da paleta
       backgroundColor: chartColors[index % chartColors.length].replace(')', ', 0.5)'), // Adiciona transparência
       tension: 0.1,
+      spanGaps: true, // Conecta pontos com dados nulos
     };
   });
 
