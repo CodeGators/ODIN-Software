@@ -1,0 +1,40 @@
+.attribute-selector {
+    margin-top: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: var(--raio-borda);
+    padding: 1rem;
+    border: 1px solid var(--borda-suave);
+  }
+  
+  .attribute-selector > label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--cor-primaria-dark);
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+  
+  .attribute-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 0.5rem;
+  }
+  
+  .attribute-item {
+    display: flex;
+    align-items: center;
+    background-color: var(--branco);
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--borda-suave);
+  }
+  
+  .attribute-item input[type="checkbox"] {
+    margin-right: 8px;
+  }
+  
+  .attribute-item label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+  }
