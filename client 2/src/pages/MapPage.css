@@ -1,0 +1,152 @@
+/* --- ESTRUTURA PRINCIPAL (A SOLUÇÃO ESTÁ AQUI) --- */
+
+.main-container {
+    display: flex; /* Ativa o Flexbox para alinhar a sidebar e o mapa */
+    height: 100vh; /* Ocupa 100% da altura da tela */
+    width: 100vw;  /* Ocupa 100% da largura da tela */
+    overflow: hidden; /* Evita barras de rolagem indesejadas na página inteira */
+  }
+  
+  .sidebar {
+    width: 400px; /* Define uma largura fixa para a barra lateral */
+    flex-shrink: 0; /* Impede que a barra lateral encolha */
+    background-color: #ffffff; /* Fundo branco para a sidebar */
+    padding: 1rem; /* Espaçamento interno */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Sombra sutil à direita */
+    overflow-y: auto; /* Adiciona barra de rolagem se o conteúdo for muito grande */
+    z-index: 10; /* Garante que a sidebar fique sobre o mapa se houver sobreposição */
+  }
+  
+  .map-container {
+    flex-grow: 1; /* Faz o mapa ocupar todo o espaço restante */
+    height: 100%; /* Garante que o mapa ocupe toda a altura disponível */
+  }
+  
+  
+  /* --- ESTILOS DO FORMULÁRIO (UNIFORMIDADE E FONTES) --- */
+  
+  .filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem; /* Espaçamento uniforme entre os elementos */
+  }
+  
+  .filter-form label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  
+  .filter-form input[type="date"],
+  .filter-form .dropdown-button {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    color: #555;
+    background-color: #fff;
+  }
+  
+  .date-inputs {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .date-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .search-button {
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: #ffa600;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+  }
+  
+  .search-button:hover:not(:disabled) {
+    background-color: #0056b3;
+  }
+  
+  .search-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  
+  /* --- ESTILOS DO DROPDOWN PERSONALIZADO --- */
+  
+  .custom-dropdown-container {
+    position: relative;
+  }
+  
+  .dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dropdown-list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .dropdown-list li {
+    padding: 0.6rem 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+  }
+  
+  .dropdown-list li:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .dropdown-list input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
+  .dropdown-list label {
+    font-size: 1rem;
+    font-weight: normal;
+    color: #333;
+    user-select: none;
+  }
+  
+  
+  /* --- ESTILOS DOS RESULTADOS DA BUSCA --- */
+  
+  .results-section {
+      padding-top: 1.5rem; /* Espaço entre o formulário e os resultados */
+  }
+  
+  .results-section h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  /* Outros estilos de resultado... */
