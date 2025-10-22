@@ -1,37 +1,90 @@
+/* Estilos para o Modal Arrastável */
+
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-  }
-  
-  .modal-content {
-    background-color: white;
-    padding: 30px;
-    border-radius: 8px;
-    position: relative;
-    width: 90%;
-    max-width: 800px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  }
-  
-  .modal-close-button {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 1.8rem;
-    cursor: pointer;
-    color: #888;
-  }
-  
-  .modal-close-button:hover {
-    color: #333;
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.65); /* Levemente mais escuro */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* Aumentado para garantir que fique acima de outros elementos */
+}
+
+.modal-content {
+  background-color: var(--branco); /* Usa a variável do seu tema */
+  border-radius: var(--raio-borda);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.35); /* Sombra mais pronunciada */
+  overflow: hidden; /* Importante para o Draggable e bordas arredondadas */
+  width: 90%;
+  max-width: 800px; /* Limita a largura máxima */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cabeçalho que serve como alça para arrastar */
+.modal-drag-handle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px; /* Ajuste no padding */
+  background-color: var(--cor-primaria); /* Cor primária no cabeçalho */
+  color: var(--branco);
+  cursor: grab; /* Indica que pode ser arrastado */
+  border-bottom: 1px solid var(--cor-primaria-dark);
+  user-select: none; /* Impede seleção de texto ao arrastar */
+}
+.modal-drag-handle:active {
+  cursor: grabbing; /* Feedback visual ao arrastar */
+}
+
+.modal-drag-handle span {
+  font-weight: bold;
+  font-size: 1.1rem; /* Tamanho do título do modal */
+}
+
+/* Botão de fechar Aprimorado */
+.modal-close-button {
+  background: none;
+  border: none;
+  font-size: 2rem; /* Tamanho maior */
+  line-height: 1;
+  color: var(--branco);
+  cursor: pointer;
+  padding: 5px 8px; /* Área clicável maior */
+  border-radius: 4px;
+  opacity: 0.7; /* Começa um pouco transparente */
+  transition: opacity 0.2s, background-color 0.2s, color 0.2s; /* Transição suave */
+}
+
+.modal-close-button:hover {
+  opacity: 1; /* Totalmente opaco */
+  background-color: rgba(0, 0, 0, 0.2); /* Fundo escuro sutil */
+  color: var(--branco); /* Garante que o X continue branco */
+}
+
+/* Área de conteúdo do gráfico */
+.modal-chart-content {
+  padding: 25px; /* Mais espaçamento interno */
+  max-height: 75vh; /* Aumenta um pouco a altura máxima */
+  overflow-y: auto; /* Scroll apenas se necessário */
+}
+
+/* Estilo da scrollbar dentro do modal */
+.modal-chart-content::-webkit-scrollbar {
+  width: 8px; /* Largura da scrollbar */
+}
+.modal-chart-content::-webkit-scrollbar-track {
+  background: var(--fundo-claro);
+  border-radius: 4px;
+}
+.modal-chart-content::-webkit-scrollbar-thumb {
+  background-color: var(--cor-primaria);
+  border-radius: 4px;
+  border: 2px solid var(--fundo-claro); /* Borda na cor do fundo */
+}
+.modal-chart-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--cor-primaria-dark);
+}
