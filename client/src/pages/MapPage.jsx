@@ -40,6 +40,16 @@ const wtssCompatibleCollections = [
   'mod11a2-6.1', 'mod13q1-6.1', 'myd11a2-6.1', 'myd13q1-6.1', 'S2-16D-2'
 ];
 
+// --- NOVO: Definição dos estilos do Mapbox ---
+// Colocamos isso fora do componente para não ser recriado
+const MAPBOX_STYLES = {
+  navigation: { id: 'navigation-night-v1', label: 'Navegação (Escuro)' },
+  streets: { id: 'streets-v12', label: 'Ruas' },
+  satellite: { id: 'satellite-v9', label: 'Satélite' },
+  light: { id: 'light-v11', label: 'Claro' },
+  outdoors: { id: 'outdoors-v12', label: 'Relevo' }
+};
+
 // --- Componentes auxiliares do mapa ---
 function MapUpdater({ coords }) {
   const map = useMap();
@@ -84,6 +94,10 @@ const MapPage = ({
 
   // --- NOVO: Estado para o filtro simples (grupos lógicos) ---
   const [simpleFilter, setSimpleFilter] = useState('all');
+
+  // --- NOVO: Estado para o estilo do mapa ---
+  // O valor padrão ('navigation') é a chave do objeto MAPBOX_STYLES
+  const [currentStyleKey, setCurrentStyleKey] = useState('navigation');
 
   useEffect(() => {
     getCollections()
@@ -131,8 +145,7 @@ const MapPage = ({
 
   const handleMapClick = (latlng) => setSelectedCoords(latlng);
 
-  // --- ATUALIZADO: Grupos Lógicos para o filtro simples ---
-  
+  // --- ATUALIZADO: Grupos Lógicos para o filtro simples --- 
   // (Este objeto agora é a fonte única da verdade para os grupos)
   const logicalGroups = {
     'all': {
@@ -191,10 +204,10 @@ const MapPage = ({
         .filter(c => {
           const title = c.title.toLowerCase();
           return title.startsWith('modis') ||
-                 title.startsWith('mod11') ||
-                 title.startsWith('mod13') ||
-                 title.startsWith('myd11') ||
-                 title.startsWith('myd13');
+            title.startsWith('mod11') ||
+            title.startsWith('mod13') ||
+            title.startsWith('myd11') ||
+            title.startsWith('myd13');
         })
         .map(c => c.id)
     },
@@ -706,36 +719,71 @@ const MapPage = ({
 
       {/* --- Mapa --- */}
       <main className="map-container">
-        <MapContainer
-          center={[-14.235, -51.925]}
-          zoom={5}
-          style={{ height: '100%', width: '100%' }}
-        >
-          <TileLayer
-            url={`https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/tiles/{z}/{x}/{y}?access_token=${meuToken}`}
-            attribution='&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          />
-          <MapClickHandler
-            onMapClick={handleMapClick}
-            selectedCoords={selectedCoords}
-          />
-          <MapUpdater coords={selectedCoords} />
-          {selectedGeometry && (
-            <GeoJSON
-              key={geoJsonKey}
-              data={selectedGeometry}
-              style={{ fillOpacity: 0, color: '#007bff', weight: 2 }}
+        {/* --- NOVO: Wrapper para posicionar o seletor sobre o mapa --- */}
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          
+          {/* --- NOVO: Seletor de Estilo do Mapa --- */}
+          <div style={{
+            position: 'absolute',
+            top: 10,
+            right: 10,
+            zIndex: 1000, // zIndex alto para ficar sobre o mapa
+            background: 'white',
+            padding: '5px 10px',
+            borderRadius: '5px',
+            fontFamily: 'sans-serif',
+            fontSize: '0.9rem',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+            cursor: 'pointer'
+          }}>
+            <label htmlFor="style-select" style={{ marginRight: '5px', cursor: 'pointer' }}>Estilo:</label>
+            <select
+              id="style-select"
+              value={currentStyleKey}
+              onChange={(e) => setCurrentStyleKey(e.target.value)}
+              style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}
+            >
+              {Object.entries(MAPBOX_STYLES).map(([key, { label }]) => (
+                <option key={key} value={key}>{label}</option>
+              ))}
+            </select>
+          </div>
+          
+          <MapContainer
+            center={[-14.235, -51.925]}
+            zoom={5}
+            style={{ height: '100%', width: '100%' }}
+          >
+            {/* --- ATUALIZADO: TileLayer agora é dinâmico --- */}
+            <TileLayer
+              // A "key" força o React-Leaflet a recarregar a camada
+              key={currentStyleKey} 
+              // A URL usa o ID do estilo que está no estado
+              url={`https://api.mapbox.com/styles/v1/mapbox/${MAPBOX_STYLES[currentStyleKey].id}/tiles/{z}/{x}/{y}?access_token=${meuToken}`}
+              attribution='&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             />
-          )}
-          {imageOverlay && (
-            <ImageOverlay
-              url={imageOverlay.url}
-              bounds={imageOverlay.bounds}
-              opacity={0.7}
-              zIndex={10}
+            <MapClickHandler
+              onMapClick={handleMapClick}
+              selectedCoords={selectedCoords}
             />
-          )}
-        </MapContainer>
+            <MapUpdater coords={selectedCoords} />
+            {selectedGeometry && (
+              <GeoJSON
+                key={geoJsonKey}
+                data={selectedGeometry}
+                style={{ fillOpacity: 0, color: '#007bff', weight: 2 }}
+              />
+            )}
+            {imageOverlay && (
+              <ImageOverlay
+                url={imageOverlay.url}
+                bounds={imageOverlay.bounds}
+                opacity={0.7}
+                zIndex={10}
+              />
+            )}
+          </MapContainer>
+        </div>
       </main>
     </div>
   );
