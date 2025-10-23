@@ -1,0 +1,121 @@
+/* FixedDashboard.css */
+
+/* Paleta de Cores (A mesma do tema simples) */
+:root {
+  --theme-bg-page: #f0f4f8;
+  --theme-bg-widget: #ffffff;
+  --theme-header-bg: #f9f9f9;
+  --theme-text-dark: #333333;
+  --theme-text-light: #666666;
+  --theme-accent-green: #2a7d4b;
+  --theme-accent-blue: #3498db;
+  --theme-accent-orange: #f39c12;
+  --theme-border-soft: #e0e0e0;
+}
+
+/* Base da página */
+.dashboard-page-container {
+  background-color: var(--theme-bg-page);
+  padding: 24px;
+  min-height: calc(100vh - 80px); /* Ajuste conforme seu header */
+}
+
+/* ======================================= */
+/* ====== NOVO LAYOUT EM GRID FIXO ======= */
+/* ======================================= */
+.dashboard-grid {
+  display: grid;
+  gap: 24px;
+  /* Define 3 colunas, mas a primeira é menor */
+  grid-template-columns: 0.8fr 1fr 1.2fr;
+}
+
+/* Estilo do Widget Fixo */
+.widget {
+  background: var(--theme-bg-widget);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--theme-border-soft);
+  display: flex; /* Para organizar o cabeçalho e o conteúdo */
+  flex-direction: column;
+}
+
+.widget-header {
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  font-size: 1rem;
+  color: var(--theme-text-dark);
+  padding: 12px 18px;
+  background-color: var(--theme-header-bg);
+  border-bottom: 1px solid var(--theme-border-soft);
+  border-radius: 8px 8px 0 0;
+}
+
+.widget-content {
+  padding: 20px;
+  flex-grow: 1; /* Faz o conteúdo crescer */
+  /* Corrige o gráfico para não estourar o widget */
+  position: relative; 
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 300px; /* Dê uma altura fixa para os gráficos */
+}
+
+/* ======================================= */
+/* ====== NOVOS ESTILOS DE TEXTO ======== */
+/* ======================================= */
+
+.stats-widget {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centraliza as estatísticas */
+  height: 100%;
+  gap: 15px; /* Espaço entre os itens */
+}
+
+.stat-item {
+  font-size: 1.2rem; /* Aumenta a fonte */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-item span {
+  color: var(--theme-text-light); /* Rótulo (ex: "Total") */
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.stat-item strong {
+  font-size: 1.7rem; /* Números bem maiores */
+  font-weight: bold;
+}
+
+/* Classes de cor para os números */
+.stat-value-green {
+  color: var(--theme-accent-green);
+}
+.stat-value-blue {
+  color: var(--theme-accent-blue);
+}
+.stat-value-orange {
+  color: var(--theme-accent-orange);
+}
+
+
+/* Estilo para a caixa de "sem resultados" */
+.no-results-box {
+  background: var(--theme-bg-widget);
+  border: 1px solid var(--theme-border-soft);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  color: var(--theme-text-dark);
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 50px;
+  grid-column: 1 / -1; /* Ocupa a largura total se não houver dados */
+}
+/* ... (outros estilos do no-results-box) ... */
