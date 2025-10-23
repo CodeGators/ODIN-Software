@@ -158,3 +158,20 @@
 .location-field-header input[type=number] {
   -moz-appearance: textfield;
 }
+
+.interface-toggle-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex; 
+  align-items: center; 
+  margin-right: 15px; /* Adiciona espaço à direita do botão */
+}
+
+.interface-toggle-button::after {
+  display: none;
+}
+
+.interface-toggle-button span:first-child {
+  font-size: 1.3rem; 
+}

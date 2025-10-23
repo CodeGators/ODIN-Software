@@ -618,3 +618,21 @@ tr:nth-child(even) {
 .dropdown-list li input[type="checkbox"] {
   transform: scale(0.9); 
 }
+
+/* --- ESTILOS GLOBAIS PARA MODOS DE INTERFACE --- */
+
+/* Estilo padrão (sidebar) */
+.app-container.app-mode-sidebar .page-content {
+  overflow-y: hidden; /* Remove scroll do container principal no modo sidebar */
+}
+
+/* Estilo para modo Tela Cheia */
+.app-container.app-mode-fullscreen .page-content {
+  height: calc(100vh - 70px); /* Ajusta altura para ocupar espaço abaixo do header */
+  overflow: hidden; /* O mapa interno cuidará do scroll se necessário */
+}
+
+/* Esconde a Map Info Box padrão no modo fullscreen (será reimplementada flutuante) */
+.app-mode-fullscreen #map-info-box {
+  display: none;
+}

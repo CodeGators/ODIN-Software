@@ -1,0 +1,138 @@
+.fullscreen-map-layout {
+    width: 100%;
+    height: calc(100vh - 70px); 
+    position: relative; 
+    overflow: hidden; 
+  }
+  
+  .fullscreen-map-layout .map-container-fullscreen { 
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* --- Estilos dos Painéis Flutuantes --- */
+  .floating-panel {
+    position: absolute; /* Para flutuar sobre o mapa */
+    background-color: rgba(255, 255, 255, 0.95); /* Fundo branco semi-transparente */
+    border: 1px solid var(--borda-suave);
+    border-radius: var(--raio-borda);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1005; /* Acima do mapa, abaixo dos controles de mapa */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Evita que conteúdo interno vaze */
+  }
+  
+  /* Painel de Filtros (posição inicial e tamanho) */
+  .filter-panel {
+    top: 20px;
+    left: 20px;
+    width: 400px; /* Largura similar à sidebar */
+    max-height: calc(100% - 40px); /* Limita altura */
+  }
+  
+  /* Painel de Resultados (posição inicial e tamanho) */
+  .results-panel {
+    top: 20px;
+    right: 20px; /* Alinha à direita */
+    width: 350px; /* Um pouco menor que o de filtros */
+    max-height: calc(100% - 40px); /* Limita altura */
+  }
+  
+  /* Alça para Arrastar */
+  .drag-handle {
+    background-color: var(--cor-primaria-dark);
+    color: var(--branco);
+    padding: 8px 12px;
+    cursor: grab;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none; /* Impede seleção de texto ao arrastar */
+  }
+  .drag-handle:active {
+    cursor: grabbing;
+  }
+  .drag-handle span {
+    font-weight: bold;
+  }
+  
+  /* Botão de Fechar no Painel */
+  .close-panel-button {
+    background: none;
+    border: none;
+    color: var(--branco);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 5px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  .close-panel-button:hover {
+    opacity: 1;
+  }
+  
+  /* Conteúdo Interno do Painel (com scroll) */
+  .panel-content {
+    padding: 5px; /* Reduz padding interno para mais espaço */
+    overflow-y: auto; /* Adiciona scroll se necessário */
+    flex-grow: 1; /* Faz o conteúdo ocupar o espaço restante */
+  }
+  
+  /* Ajusta o padding interno do formulário e resultados quando flutuantes */
+  .floating-panel .filter-form {
+    padding: 1rem; 
+    box-shadow: none; /* Remove sombra interna */
+    margin-bottom: 0;
+    height: 100%; /* Ocupa altura do panel-content */
+  }
+  .floating-panel .results-section {
+    padding: 1rem;
+    box-shadow: none; /* Remove sombra interna */
+    height: 100%; /* Ocupa altura do panel-content */
+    background-color: transparent; /* Remove fundo branco extra */
+    border: none;
+  }
+  
+  /* Garante que a lista de resultados use o scroll do painel */
+  .floating-panel #search-results-list {
+    max-height: none; /* Remove limite de altura interno */
+  }
+  
+  
+  /* --- Estilos dos Botões de Controle de Visibilidade --- */
+  .floating-panel-controls {
+    position: absolute;
+    top: 10px;
+    left: 50%; /* Centraliza horizontalmente */
+    transform: translateX(-50%); /* Ajuste fino da centralização */
+    z-index: 1010; /* Acima dos painéis */
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: var(--raio-borda);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    gap: 5px;
+    padding: 5px;
+  }
+  
+  .control-button {
+    padding: 8px 15px;
+    background-color: var(--fundo-claro);
+    border: 1px solid var(--borda-suave);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--texto-cinza);
+    transition: background-color 0.2s, color 0.2s;
+  }
+  
+  .control-button:hover {
+    background-color: #e9ecef;
+  }
+  
+  .control-button.active {
+    background-color: var(--cor-primaria);
+    color: var(--branco);
+    border-color: var(--cor-primaria-dark);
+  }

@@ -2,8 +2,17 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import './Header.css';
 
-//RECEBEMOS AS PROPS VINDAS DO APP.JSX
-const Header = ({ selectedCoords, handleCoordinateChange }) => {
+// --- NOVO: Ícones (exemplo usando texto, pode substituir por SVGs/FontAwesome) ---
+const FullscreenEnterIcon = () => <span>&#x26F6;</span>; // Exemplo: Quadrado com setas
+const FullscreenExitIcon = () => <span>&#x2922;</span>; // Exemplo: Setas para dentro
+
+// --- Recebe as novas props ---
+const Header = ({ 
+  selectedCoords, 
+  handleCoordinateChange, 
+  interfaceMode, 
+  toggleInterfaceMode 
+}) => {
   return (
     <header className="main-header">
       <div className="logo">
@@ -15,8 +24,8 @@ const Header = ({ selectedCoords, handleCoordinateChange }) => {
         <h1>ODIN</h1>
       </div>
 
-      {/*ADICIONAMOS OS CAMPOS DE INPUT DE LOCALIZAÇÃO AQUI */}
       <div className="location-inputs-header">
+        {/* Inputs de Latitude/Longitude */}
         <div className="location-field-header">
           <label htmlFor="latitude">Latitude</label>
           <input
@@ -44,9 +53,19 @@ const Header = ({ selectedCoords, handleCoordinateChange }) => {
       </div>
 
       <nav className="main-nav">
+        {/* Mapa e Botão de Tela Cheia JUNTOS */}
         <NavLink to="/" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
           Mapa
         </NavLink>
+        <button 
+          onClick={toggleInterfaceMode} 
+          className="nav-link interface-toggle-button" // Mantém a classe para estilo base
+          title={interfaceMode === 'sidebar' ? "Mudar para Tela Cheia" : "Mudar para Vista Padrão"}
+        >
+          {interfaceMode === 'sidebar' ? <FullscreenEnterIcon /> : <FullscreenExitIcon />}
+        </button>
+        
+        {/* Outros Links */}
         <NavLink to="/data" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
           Dados
         </NavLink>
