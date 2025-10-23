@@ -1,138 +1,232 @@
+/* Conteúdo COMPLETO para client/src/layouts/FullScreenMapLayout.css */
+
 .fullscreen-map-layout {
-    width: 100%;
-    height: calc(100vh - 70px); 
-    position: relative; 
-    overflow: hidden; 
-  }
-  
-  .fullscreen-map-layout .map-container-fullscreen { 
-    width: 100%;
-    height: 100%;
-  }
-  
-  /* --- Estilos dos Painéis Flutuantes --- */
-  .floating-panel {
-    position: absolute; /* Para flutuar sobre o mapa */
-    background-color: rgba(255, 255, 255, 0.95); /* Fundo branco semi-transparente */
-    border: 1px solid var(--borda-suave);
-    border-radius: var(--raio-borda);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    z-index: 1005; /* Acima do mapa, abaixo dos controles de mapa */
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; /* Evita que conteúdo interno vaze */
-  }
-  
-  /* Painel de Filtros (posição inicial e tamanho) */
-  .filter-panel {
-    top: 20px;
-    left: 20px;
-    width: 400px; /* Largura similar à sidebar */
-    max-height: calc(100% - 40px); /* Limita altura */
-  }
-  
-  /* Painel de Resultados (posição inicial e tamanho) */
-  .results-panel {
-    top: 20px;
-    right: 20px; /* Alinha à direita */
-    width: 350px; /* Um pouco menor que o de filtros */
-    max-height: calc(100% - 40px); /* Limita altura */
-  }
-  
-  /* Alça para Arrastar */
-  .drag-handle {
-    background-color: var(--cor-primaria-dark);
-    color: var(--branco);
-    padding: 8px 12px;
-    cursor: grab;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    user-select: none; /* Impede seleção de texto ao arrastar */
-  }
-  .drag-handle:active {
-    cursor: grabbing;
-  }
-  .drag-handle span {
-    font-weight: bold;
-  }
-  
-  /* Botão de Fechar no Painel */
-  .close-panel-button {
-    background: none;
-    border: none;
-    color: var(--branco);
-    font-size: 1.5rem;
-    line-height: 1;
-    cursor: pointer;
-    padding: 0 5px;
-    opacity: 0.8;
-    transition: opacity 0.2s;
-  }
-  .close-panel-button:hover {
-    opacity: 1;
-  }
-  
-  /* Conteúdo Interno do Painel (com scroll) */
-  .panel-content {
-    padding: 5px; /* Reduz padding interno para mais espaço */
-    overflow-y: auto; /* Adiciona scroll se necessário */
-    flex-grow: 1; /* Faz o conteúdo ocupar o espaço restante */
-  }
-  
-  /* Ajusta o padding interno do formulário e resultados quando flutuantes */
-  .floating-panel .filter-form {
-    padding: 1rem; 
-    box-shadow: none; /* Remove sombra interna */
-    margin-bottom: 0;
-    height: 100%; /* Ocupa altura do panel-content */
-  }
-  .floating-panel .results-section {
+  width: 100%;
+  height: calc(100vh - 70px); /* Ajusta altura abaixo do header */
+  position: relative; /* Contexto para posicionamento absoluto dos painéis */
+  overflow: hidden; /* Evita barras de rolagem no layout principal */
+}
+
+/* Garante que o container do mapa ocupe todo o espaço */
+.fullscreen-map-layout .map-container-fullscreen {
+  width: 100%;
+  height: 100%;
+}
+
+/* --- Wrapper para o Draggable --- */
+/* Este wrapper será posicionado pelo Draggable */
+.draggable-wrapper {
+  position: absolute !important; /* Necessário para Draggable funcionar corretamente */
+  /* Remove width/height daqui, será controlado pelo ResizableBox interno */
+  z-index: 1005; /* Garante que fique acima do mapa */
+}
+/* Posições iniciais (Fallback) */
+.filter-draggable-wrapper {
+  top: 20px;
+  left: 20px;
+}
+.results-draggable-wrapper {
+  top: 20px;
+  right: 20px;
+  left: auto;
+}
+
+
+/* --- Estilos dos Painéis (Aplicados ao ResizableBox) --- */
+/* O ResizableBox em si não precisa de position absolute aqui */
+.floating-panel {
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--raio-borda);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  /* width/height são controlados pelo ResizableBox props/state */
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important; /* Essencial */
+}
+
+/* --- Wrapper interno (para layout flex e ref do Draggable) --- */
+.panel-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Garante que o conteúdo não vaze do wrapper */
+}
+
+
+/* Alça para Arrastar (Handle) */
+.drag-handle {
+  background-color: var(--cor-primaria-dark);
+  color: var(--branco);
+  padding: 8px 12px;
+  cursor: grab;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  flex-shrink: 0;
+  height: 40px;
+  box-sizing: border-box;
+}
+.drag-handle:active {
+  cursor: grabbing;
+}
+.drag-handle span {
+  font-weight: bold;
+}
+
+/* Botão de Fechar no Painel */
+.close-panel-button {
+  background: none;
+  border: none;
+  color: var(--branco);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 5px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+.close-panel-button:hover {
+  opacity: 1;
+}
+
+/* Conteúdo Interno do Painel (com scroll) */
+.panel-content {
+  padding: 5px;
+  overflow-y: auto;
+  flex-grow: 1;
+  background-color: rgba(255, 255, 255, 0.95);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ajustes nos componentes internos quando flutuantes */
+.floating-panel .filter-form,
+.floating-panel .results-section {
     padding: 1rem;
-    box-shadow: none; /* Remove sombra interna */
-    height: 100%; /* Ocupa altura do panel-content */
-    background-color: transparent; /* Remove fundo branco extra */
+    box-shadow: none;
+    margin-bottom: 0;
+    height: 100%;
     border: none;
-  }
-  
-  /* Garante que a lista de resultados use o scroll do painel */
-  .floating-panel #search-results-list {
-    max-height: none; /* Remove limite de altura interno */
-  }
-  
-  
-  /* --- Estilos dos Botões de Controle de Visibilidade --- */
-  .floating-panel-controls {
+    background-color: transparent;
+     display: flex;
+     flex-direction: column;
+     flex-grow: 1;
+     min-height: 0;
+}
+
+.floating-panel #search-results-list {
+    max-height: none;
+    flex-grow: 1;
+    min-height: 0;
+}
+
+
+/* --- Estado Colapsado --- */
+/* Aplica ao ResizableBox (.floating-panel) */
+.floating-panel.collapsed {
+  /* A altura é controlada pelo ResizableBox props */
+  overflow: hidden !important;
+}
+/* Oculta o conteúdo */
+.floating-panel.collapsed .panel-content {
+  display: none;
+}
+
+
+/* --- Botões de Controle de Visibilidade --- */
+.floating-panel-controls {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1010;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: var(--raio-borda);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  gap: 5px;
+  padding: 5px;
+}
+
+.control-button {
+  padding: 8px 15px;
+  background-color: var(--fundo-claro);
+  border: 1px solid var(--borda-suave);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--texto-cinza);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.control-button:hover {
+  background-color: #e9ecef;
+}
+
+.control-button.active {
+  background-color: var(--cor-primaria);
+  color: var(--branco);
+  border-color: var(--cor-primaria-dark);
+}
+
+
+/* --- Estilos react-resizable --- */
+.react-resizable {
+  position: relative; /* Garante contexto para handles */
+}
+.react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  padding: 0 3px 3px 0;
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2IDYiIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiNibGFjayIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iNnB4Ij48ZyBvcGFjaXR5PSIwLjMiPjxwYXRoIGQ9Ik02IDYgTDAgNiBMMyAzIEw2IDYgWiIgZmlsbD0id2hpdGUiLz48cGF0aCBkPSJNNiA0IEw0IDYgTDYgNiBaIiBmaWxsPSJ3aGl0ZSIvPjwvZz48L3N2Zz4=');
+  background-position: bottom right;
+  z-index: 1006; /* Acima do conteúdo do painel */
+}
+.react-resizable-handle-sw { bottom: 0; left: 0; cursor: sw-resize; transform: rotate(90deg); }
+.react-resizable-handle-se { bottom: 0; right: 0; cursor: se-resize; }
+.react-resizable-handle-nw { top: 0; left: 0; cursor: nw-resize; transform: rotate(180deg); }
+.react-resizable-handle-ne { top: 0; right: 0; cursor: ne-resize; transform: rotate(270deg); }
+.react-resizable-handle-w,
+.react-resizable-handle-e { top: 50%; margin-top: -10px; cursor: ew-resize; width: 10px; height: 20px; background-image: none;}
+.react-resizable-handle-w { left: -5px; }
+.react-resizable-handle-e { right: -5px; }
+.react-resizable-handle-n,
+.react-resizable-handle-s { left: 50%; margin-left: -10px; cursor: ns-resize; width: 20px; height: 10px; background-image: none;}
+.react-resizable-handle-n { top: -5px; }
+.react-resizable-handle-s { bottom: -5px; }
+
+/* Indicador visual das alças laterais/verticais */
+.react-resizable-handle-w::after,
+.react-resizable-handle-e::after,
+.react-resizable-handle-n::after,
+.react-resizable-handle-s::after {
+    content: '';
     position: absolute;
-    top: 10px;
-    left: 50%; /* Centraliza horizontalmente */
-    transform: translateX(-50%); /* Ajuste fino da centralização */
-    z-index: 1010; /* Acima dos painéis */
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: var(--raio-borda);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    display: flex;
-    gap: 5px;
-    padding: 5px;
-  }
-  
-  .control-button {
-    padding: 8px 15px;
-    background-color: var(--fundo-claro);
-    border: 1px solid var(--borda-suave);
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--texto-cinza);
-    transition: background-color 0.2s, color 0.2s;
-  }
-  
-  .control-button:hover {
-    background-color: #e9ecef;
-  }
-  
-  .control-button.active {
-    background-color: var(--cor-primaria);
-    color: var(--branco);
-    border-color: var(--cor-primaria-dark);
-  }
+    background-color: rgba(0, 96, 100, 0.2);
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+.react-resizable-handle-w::after { right: 1px; top: 1px; bottom: 1px; width: 3px; }
+.react-resizable-handle-e::after { left: 1px; top: 1px; bottom: 1px; width: 3px; }
+.react-resizable-handle-n::after { bottom: 1px; left: 1px; right: 1px; height: 3px; }
+.react-resizable-handle-s::after { top: 1px; left: 1px; right: 1px; height: 3px; }
+
+.react-resizable-handle-w:hover::after,
+.react-resizable-handle-e:hover::after,
+.react-resizable-handle-n:hover::after,
+.react-resizable-handle-s:hover::after {
+    background-color: rgba(0, 96, 100, 0.5);
+}
+
+/* Esconde as alças quando colapsado */
+.floating-panel.collapsed .react-resizable-handle {
+    display: none;
+}
