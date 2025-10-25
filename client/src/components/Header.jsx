@@ -1,31 +1,31 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import './Header.css';
+import './Header.css'; // Vamos modificar este arquivo
 
-// --- NOVO: Ícones (exemplo usando texto, pode substituir por SVGs/FontAwesome) ---
-const FullscreenEnterIcon = () => <span>&#x26F6;</span>; // Exemplo: Quadrado com setas
-const FullscreenExitIcon = () => <span>&#x2922;</span>; // Exemplo: Setas para dentro
+// Ícones (mantidos como texto)
+const FullscreenEnterIcon = () => <span className="icon-symbol">&#x26F6;</span>;
+const FullscreenExitIcon = () => <span className="icon-symbol">&#x2922;</span>;
 
-// --- Recebe as novas props ---
-const Header = ({ 
-  selectedCoords, 
-  handleCoordinateChange, 
-  interfaceMode, 
-  toggleInterfaceMode 
+const Header = ({
+  selectedCoords,
+  handleCoordinateChange,
+  interfaceMode,
+  toggleInterfaceMode
 }) => {
   return (
-    <header className="main-header">
+    // Adicionamos uma classe 'modern-header' para aplicar os novos estilos
+    <header className="main-header modern-header">
       <div className="logo">
-        <img 
-          src="/odin_logo.png" 
-          alt="Logo ODIN" 
-          className="logo-image" 
+        <img
+          src="/odin_logo.png" // Certifique-se que o caminho está correto na pasta public
+          alt="Logo ODIN"
+          className="logo-image"
         />
-        <h1>ODIN</h1>
+        {/* Adicionamos a classe 'site-title' para o gradiente */}
+        <h1 className="site-title">ODIN</h1>
       </div>
 
       <div className="location-inputs-header">
-        {/* Inputs de Latitude/Longitude */}
         <div className="location-field-header">
           <label htmlFor="latitude">Latitude</label>
           <input
@@ -57,14 +57,14 @@ const Header = ({
         <NavLink to="/" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
           Mapa
         </NavLink>
-        <button 
-          onClick={toggleInterfaceMode} 
-          className="nav-link interface-toggle-button" // Mantém a classe para estilo base
+        <button
+          onClick={toggleInterfaceMode}
+          className="nav-link interface-toggle-button" // Reutiliza nav-link para estilo base
           title={interfaceMode === 'sidebar' ? "Mudar para Tela Cheia" : "Mudar para Vista Padrão"}
         >
           {interfaceMode === 'sidebar' ? <FullscreenEnterIcon /> : <FullscreenExitIcon />}
         </button>
-        
+
         {/* Outros Links */}
         <NavLink to="/data" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
           Dados

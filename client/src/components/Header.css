@@ -1,110 +1,78 @@
-/* Conteúdo completo e aprimorado para Header.css */
+/* Conteúdo COMPLETO e REVISADO para Header.css - Fundo Sólido Original & Novo Gradiente */
 
-/* Animação de entrada suave para o header */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* 1. Referência às Variáveis Globais (definidas em index.css) */
+:root {
+ 
+  --cor-borda-header: rgba(0, 0, 0, 0.1);
+  --sombra-header: 0 1px 1px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0,0,0,0.15);
+  --raio-borda-header: 8px;
+  --font-principal: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  /* --- NOVAS CORES PARA O GRADIENTE DO TÍTULO --- */
+  --gradiente-titulo-inicio: #00ff73; /* Azul claro / Ciano */
+  --gradiente-titulo-fim: #0099ff;    /* Azul mais escuro */
 }
 
-.main-header {
+
+/* Animação de entrada (mantida) */
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
+
+/* 2. Estilo Principal do Header */
+.main-header.modern-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--cor-primaria);
-  color: var(--branco);
-  padding: 0 35px;
-  height: 70px; /* ALTERADO: Aumentado para acomodar a logo maior */
+  /* Fundo com cor primária sólida */
+  background-color: var(--cor-primaria); /* Usa a cor original do seu tema */
+  border-bottom: 1px solid var(--cor-borda-header);
+  color: var(--branco); /* Texto principal branco */
+  padding: 0 25px;
+  height: 70px;
   width: 100%;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  box-shadow: var(--sombra-header);
   animation: fadeInDown 0.5s ease-out;
+  font-family: var(--font-principal);
+  position: relative;
+  z-index: 1010;
 }
 
+
+/* 3. Logo e Título */
 .main-header .logo {
   display: flex;
   align-items: center;
   transition: transform 0.3s ease;
 }
-
 .main-header .logo:hover {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 .logo-image {
-  height: 100px; /* ALTERADO: Imagem aumentada de 40px para 50px */
+  height: 60px;
   width: auto;
-  margin-right: 15px;
-  margin-top: -33px;
+  margin-right: 12px;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
 }
 
-
-.main-header .logo h1 {
-  font-family: var(--font-heading);
-  font-size: 2rem; /* ALTERADO: Levemente aumentado para balancear com a nova logo */
+/* Título com o NOVO Gradiente Vertical */
+.site-title {
+  font-size: 2rem;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  /* --- GRADIENTE ATUALIZADO --- */
+  background-image: linear-gradient(to bottom, var(--gradiente-titulo-inicio) 0%, var(--gradiente-titulo-fim) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 2px;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
 }
 
-.main-nav {
-  display: flex;
-  gap: 20px;
-}
 
-.nav-link {
-  color: var(--branco);
-  text-decoration: none;
-  padding: 10px 5px;
-  border-radius: var(--raio-borda);
-  font-family: var(--font-heading);
-  font-size: 1.1rem;
-  font-weight: 500;
-  position: relative;
-  opacity: 0.8;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.nav-link:hover {
-  opacity: 1;
-  transform: translateY(-2px);
-}
-
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 3px;
-  background-color: var(--cor-realce);
-  border-radius: 2px;
-  transition: width 0.3s ease-in-out;
-}
-
-.nav-link:hover::after {
-  width: 100%;
-}
-
-.nav-link.active {
-  font-weight: 700;
-  opacity: 1;
-}
-
-.nav-link.active::after {
-  width: 100%;
-}
-
-/* --- ESTILOS PARA INPUTS DE COORDENADAS NO HEADER --- */
-
+/* 4. Inputs de Localização (mantidos como na versão anterior) */
 .location-inputs-header {
   display: flex;
   gap: 20px;
   align-items: center;
-  /* Centraliza os inputs no espaço disponível entre a logo e a navegação */
   flex-grow: 1;
   justify-content: center;
 }
@@ -115,63 +83,96 @@
 }
 
 .location-field-header label {
-  color: var(--branco);
-  opacity: 0.8;
-  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.7rem;
   font-weight: 500;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .location-field-header input {
-  background-color: var(--cor-primaria-dark); /* Fundo escuro que combina com o header */
+  background-color: var(--cor-primaria-dark);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--branco);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-family: 'Roboto', sans-serif;
-  font-size: 1rem;
-  width: 180px; /* Largura dos campos */
-  transition: all 0.3s ease;
+  border-radius: var(--raio-borda-header);
+  padding: 7px 10px;
+  font-family: var(--font-principal);
+  font-size: 0.9rem;
+  width: 160px;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.1);
 }
 
 .location-field-header input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .location-field-header input:focus {
   outline: none;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.2);
   border-color: var(--cor-realce);
-  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.5);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.1), 0 0 0 2px rgba(255, 152, 0, 0.5);
 }
 
-/* Para remover as setas do input de número (Chrome, Safari, Edge) */
+/* Remove setas do input number (mantido) */
 .location-field-header input::-webkit-outer-spin-button,
-.location-field-header input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+.location-field-header input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.location-field-header input[type=number] { -moz-appearance: textfield; }
+
+
+/* 5. Navegação e Botões (mantidos como na versão anterior) */
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Para remover as setas do input de número (Firefox) */
-.location-field-header input[type=number] {
-  -moz-appearance: textfield;
-}
-
-.interface-toggle-button {
-  background: none;
+.nav-link {
+  color: var(--branco);
+  background-color: transparent;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: var(--raio-borda-header);
+  font-size: 1rem;
+  font-weight: 500;
+  position: relative;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
   border: none;
   cursor: pointer;
-  display: flex; 
-  align-items: center; 
-  margin-right: 15px; /* Adiciona espaço à direita do botão */
+  display: flex;
+  align-items: center;
+  opacity: 0.85;
 }
 
-.interface-toggle-button::after {
-  display: none;
+.nav-link::after { display: none; }
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--branco);
+  transform: translateY(-1px);
+  opacity: 1;
 }
 
-.interface-toggle-button span:first-child {
-  font-size: 1.3rem; 
+.nav-link.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+  color: var(--branco);
+  opacity: 1;
+}
+.nav-link.active:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+
+/* Botão de toggle específico */
+.interface-toggle-button {
+  padding: 8px 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.icon-symbol {
+  color: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
 }
