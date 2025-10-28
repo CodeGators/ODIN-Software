@@ -1,58 +1,51 @@
 // Arquivo: App.jsx
-import React, { useState, useRef } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import MapPage from './pages/MapPage';
 import DataPage from './pages/DataPage';
 import DashboardPage from './pages/DashboardPage';
 import Header from './components/Header';
-import TimeseriesChart from './components/TimeseriesChart';
-import './components/Modal.css';
-import Draggable from 'react-draggable';
-import 'react-resizable/css/styles.css';
+// import TimeseriesChart from './components/TimeseriesChart'; // Não precisa mais aqui
+// import './components/Modal.css'; // Não precisa mais aqui (a menos que outro componente use)
+// import Draggable from 'react-draggable'; // Não precisa mais aqui
+// import { ResizableBox } from 'react-resizable'; // Não precisa mais aqui
+import 'react-resizable/css/styles.css'; // Mantenha se SelectedItemPopup usar RND indiretamente
 
 function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedItemDetails, setSelectedItemDetails] = useState(null);
-  const [selectedCoords, setSelectedCoords] = useState(null);
-  const [timeseriesData, setTimeseriesData] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCoords, setSelectedCoords] = useState(() => { /* ... (lógica sessionStorage) ... */
+    const savedCoords = sessionStorage.getItem('odin_map_selectedCoords');
+    try { return savedCoords ? JSON.parse(savedCoords) : null; }
+    catch { sessionStorage.removeItem('odin_map_selectedCoords'); return null; }
+  });
+  const [timeseriesData, setTimeseriesData] = useState(null); // Mantém para Dashboard
+  // const [isModalOpen, setIsModalOpen] = useState(false); // --- REMOVIDO ---
   const [imageOverlay, setImageOverlay] = useState(null);
-  
-  // --- NOVO: Estado para o modo da interface ---
-  const [interfaceMode, setInterfaceMode] = useState('sidebar'); // 'sidebar' ou 'fullscreen'
+  const [interfaceMode, setInterfaceMode] = useState('sidebar');
 
-  const nodeRef = useRef(null);
+  // const nodeRef = useRef(null); // --- REMOVIDO ---
 
-  const handleCoordinateChange = (e) => {
+  const handleCoordinateChange = (e) => { /* ... (lógica idêntica) ... */
     const { name, value } = e.target;
     const numericValue = value ? parseFloat(value) : null;
-    setSelectedCoords(prev => ({ ...prev, [name === 'latitude' ? 'lat' : 'lng']: numericValue }));
+    setSelectedCoords(prev => ({ lat: name === 'latitude' ? numericValue : (prev?.lat ?? null), lng: name === 'longitude' ? numericValue : (prev?.lng ?? null) }));
   };
 
-  const closeInfoBox = () => {
-    setSelectedItemDetails(null);
-    setImageOverlay(null);
-  };
-
-  // --- NOVO: Função para alternar o modo da interface ---
-  const toggleInterfaceMode = () => {
+  const toggleInterfaceMode = () => { /* ... (lógica idêntica) ... */
     setInterfaceMode(prevMode => prevMode === 'sidebar' ? 'fullscreen' : 'sidebar');
-    // Adicional: Pode ser útil fechar painéis abertos ao trocar de modo
     setSelectedItemDetails(null);
     setImageOverlay(null);
   };
 
   return (
-    // Adiciona uma classe ao contêiner principal baseada no modo
-    <div className={`app-container app-mode-${interfaceMode}`}> 
+    <div className={`app-container app-mode-${interfaceMode}`}>
       <Header
         selectedCoords={selectedCoords}
         handleCoordinateChange={handleCoordinateChange}
-        // --- NOVO: Passa props para o Header ---
         interfaceMode={interfaceMode}
         toggleInterfaceMode={toggleInterfaceMode}
       />
-      <main className="page-content">
         <Routes>
           <Route
             path="/"
@@ -63,48 +56,38 @@ function App() {
               setSelectedItemDetails={setSelectedItemDetails}
               selectedCoords={selectedCoords}
               setSelectedCoords={setSelectedCoords}
-              setTimeseriesData={setTimeseriesData}
-              setIsModalOpen={setIsModalOpen}
+              timeseriesData={timeseriesData} // Passa os dados
+              setTimeseriesData={setTimeseriesData} // Passa a função
+              // isModalOpen={isModalOpen} // --- REMOVIDO ---
+              // setIsModalOpen={setIsModalOpen} // --- REMOVIDO ---
               imageOverlay={imageOverlay}
               setImageOverlay={setImageOverlay}
-              // --- NOVO: Passa o modo para a MapPage ---
-              interfaceMode={interfaceMode} 
+              interfaceMode={interfaceMode}
             />}
           />
-          <Route path="/data" element={<DataPage searchResults={searchResults} />} />
-          <Route path="/dashboard" element={<DashboardPage searchResults={searchResults} />} />
+          <Route element={<ContentWrapper />}>
+            <Route path="/data" element={<DataPage searchResults={searchResults} />} />
+            <Route path="/dashboard" element={
+                <DashboardPage
+                    searchResults={searchResults}
+                    // collections={/* buscar ou passar collections */}
+                    timeseriesData={timeseriesData} // Passa dados WTSS para Dashboard
+                />}
+            />
+          </Route>
         </Routes>
-      </main>
 
-      {/* InfoBox e Modal permanecem aqui, pois são sobreposições globais */}
-      {selectedItemDetails && interfaceMode === 'sidebar' && ( // Mostra apenas no modo sidebar por enquanto
-         <div id="map-info-box">
-           {selectedItemDetails.assets.thumbnail?.href && <img src={selectedItemDetails.assets.thumbnail.href} alt="Pré-visualização" />}
-           <h4>{selectedItemDetails.collection}</h4>
-           <p><strong>ID:</strong> {selectedItemDetails.id}</p>
-           <button onClick={closeInfoBox} style={{marginTop: '10px', width: '100%'}}>Fechar</button>
-       </div>
-      )}
+      {/* --- Modal WTSS REMOVIDO daqui --- */}
 
-      {isModalOpen && (
-        <div className="modal-overlay">
-          <Draggable nodeRef={nodeRef} handle=".modal-drag-handle">
-            <div ref={nodeRef} className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-drag-handle">
-                <span>Gráfico de Série Temporal</span>
-                <button className="modal-close-button" onClick={() => setIsModalOpen(false)}>
-                  &times;
-                </button>
-              </div>
-              <div className="modal-chart-content">
-                <TimeseriesChart timeseriesData={timeseriesData} />
-              </div>
-            </div>
-          </Draggable>
-        </div>
-      )}
     </div>
   );
 }
+
+// Componente Wrapper para adicionar a classe page-content
+const ContentWrapper = () => (
+    <main className="page-content">
+        <Outlet />
+    </main>
+);
 
 export default App;

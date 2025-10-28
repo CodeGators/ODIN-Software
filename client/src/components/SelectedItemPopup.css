@@ -1,0 +1,78 @@
+/* src/components/SelectedItemPopup.css */
+
+/* Estilo para a janela do popup (wrapper do Rnd) */
+.popup-window {
+  background-color: var(--branco); /* Usa sua variável de cor */
+  border-radius: var(--raio-borda); /* Usa sua variável de raio de borda */
+  box-shadow: var(--sombra-suave); /* Usa sua variável de sombra */
+  overflow: hidden; /* Garante que o conteúdo não vaze */
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--borda-suave);
+}
+
+/* Cabeçalho que serve como handle para arrastar */
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px; /* Ajuste o padding */
+  background-color: var(--cor-primaria); /* Sua cor primária */
+  color: var(--branco);
+  cursor: grab; /* Indica que pode ser arrastado */
+  border-bottom: 1px solid var(--borda-suave); /* Uma linha sutil abaixo do header */
+  user-select: none; /* Impede seleção de texto ao arrastar */
+}
+
+.popup-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  white-space: nowrap; /* Impede quebra de linha */
+  overflow: hidden; /* Esconde o texto que ultrapassa */
+  text-overflow: ellipsis; /* Adiciona "..." */
+  flex-grow: 1; /* Permite que o título ocupe o espaço disponível */
+  margin-right: 10px; /* Espaço entre o título e o botão */
+}
+
+.popup-close-button {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  line-height: 1; /* Alinha o 'x' verticalmente */
+  color: var(--branco);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.popup-close-button:hover {
+  color: var(--cor-realce); /* Cor realce no hover */
+}
+
+/* Área de conteúdo do popup */
+.popup-content {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espaçamento entre os elementos */
+  flex-grow: 1; /* Permite que o conteúdo ocupe o espaço restante */
+  overflow-y: auto; /* Adiciona scroll se o conteúdo for muito alto */
+}
+
+.popup-thumbnail {
+  width: 100%;
+  max-height: 200px; /* Limita a altura da miniatura */
+  object-fit: contain; /* Garante que a imagem se encaixe */
+  border-radius: var(--raio-borda);
+  border: 1px solid var(--borda-suave);
+}
+
+.popup-metadata p {
+  margin-bottom: 5px;
+  font-size: 0.95rem;
+  color: var(--texto-escuro);
+}
+
+.popup-metadata p:last-child {
+  margin-bottom: 0;
+}

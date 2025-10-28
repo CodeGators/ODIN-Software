@@ -1,40 +1,56 @@
-.attribute-selector {
-    margin-top: 1.5rem;
-    background-color: #f8f9fa;
-    border-radius: var(--raio-borda);
-    padding: 1rem;
-    border: 1px solid var(--borda-suave);
-  }
-  
-  .attribute-selector > label {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--cor-primaria-dark);
-    margin-bottom: 0.75rem;
-    display: block;
-  }
-  
-  .attribute-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 0.5rem;
-  }
-  
-  .attribute-item {
-    display: flex;
-    align-items: center;
-    background-color: var(--branco);
-    padding: 0.5rem;
-    border-radius: 6px;
-    border: 1px solid var(--borda-suave);
-  }
-  
-  .attribute-item input[type="checkbox"] {
-    margin-right: 8px;
-  }
-  
-  .attribute-item label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #333;
-  }
+/* Adicione em AttributeSelector.css ou no final do index.css */
+
+/* Container principal usa a classe genérica .filter-group */
+.attribute-selector-container {
+  /* Herda estilos de .filter-group */
+}
+
+/* Caixa que envolve a lista de atributos */
+.attribute-list-box {
+  border: 1px solid var(--borda-suave); /* Borda suave */
+  border-radius: var(--raio-borda); /* Mesmo raio de borda */
+  background-color: var(--fundo-claro); /* Fundo claro, igual aos dropdowns */
+  max-height: 150px; /* Limita altura com scroll */
+  overflow-y: auto; /* Adiciona scroll */
+  padding: 5px; /* Pequeno padding interno */
+}
+
+.attribute-list-box ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.attribute-list-box li {
+  display: flex;
+  align-items: center;
+  padding: 5px 8px; /* Padding nos itens */
+  border-radius: 4px; /* Raio menor para itens */
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.attribute-list-box li:hover {
+  background-color: #e9ecef; /* Um hover leve */
+}
+
+.attribute-list-box input[type="checkbox"] {
+  margin-right: 10px; /* Espaço entre checkbox e label */
+  transform: scale(0.9); /* Checkbox um pouco menor */
+  cursor: pointer;
+}
+
+.attribute-list-box label {
+  margin-bottom: 0; /* Remove margem padrão do label global */
+  font-weight: 500; /* Peso normal */
+  color: var(--texto-escuro); /* Cor do texto */
+  font-size: 0.95rem; /* Tamanho da fonte */
+  cursor: pointer; /* Cursor de ponteiro no label também */
+  user-select: none; /* Impede seleção de texto */
+  flex-grow: 1; /* Faz o label ocupar espaço */
+}
+
+/* Estilo opcional para o label "Selecionar Todos" */
+.attribute-list-box li label strong {
+    color: var(--cor-primaria-dark); /* Cor diferente para destaque */
+}
