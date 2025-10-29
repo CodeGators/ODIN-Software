@@ -1,0 +1,173 @@
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #000000; /* Azul em toda a tela */
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #afd9ec; /* garante fundo nas laterais */
+  
+}
+
+/* --- Fundo Global (para ocupar 100% da tela) --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #E1F5FE; /* Azul claro em toda a página */
+  min-height: 100vh;
+}
+
+/* --- Container Principal --- */
+.page-container {
+  padding: 32px;
+  max-width: 1600px;
+  margin: 0 auto;
+  background-color: var(--color-background);
+  min-height: 100vh;
+  color: var(--color-text);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* --- Títulos --- */
+.page-container h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-brand-teal);
+  text-shadow: 0 0 12px rgba(254, 255, 255, 0.5);
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.page-container h2 {
+  /* Altere para a cor que desejar. Ex: Ciano Neon */
+  color: #00ffff; 
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+  
+  /* Mantém o resto dos estilos do index.css, se necessário */
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 6px;
+}
+
+.page-container h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 10px;
+}
+
+/* --- Parágrafos --- */
+.page-container p {
+  font-size: 1rem;
+  color: var(--color-text-light);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+/* --- Grid dos Gráficos --- */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 28px;
+}
+
+/* --- Cards dos Gráficos --- */
+.chart-container {
+  background: linear-gradient(145deg,#00838F, #24ae9e92);
+  
+  /* ANTES (usava uma variável) */
+  /* border: 1px solid var(--color-border); */
+
+  /* DEPOIS (Exemplo: Ciano Neon com 2px de espessura) */
+  border: 2px solid #00ffff;
+  
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.749);
+  padding: 24px;
+  transition: all 0.3s ease;
+  min-height: 400px;
+  position: relative;
+  color: #368de4;
+}
+
+.chart-container:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.25),
+              0 0 40px rgba(255, 51, 204, 0.15);
+}
+
+/* Gráfico de linha ocupa toda a largura */
+.chart-container[style*="grid-column: 1 / -1"] {
+  min-height: 460px;
+}
+
+/* --- Seção "Sem Resultados" --- */
+.no-results-box {
+  background: rgba(0, 0, 0, 0.6); /* azul translúcido */
+  border-radius: var(--border-radius);
+  border: 2px dashed rgba(0, 0, 0, 0.2);
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 250px;
+  color: var(--color-text-light);
+  box-shadow: none;
+  transition: background 0.3s ease;
+}
+
+.no-results-box:hover {
+  background: rgba(1, 6, 8, 0.9); /* mais forte no hover */
+}
+
+.no-results-box h3 {
+  color: var(--color-text);
+}
+
+.no-results-box p {
+  color: var(--color-text-light);
+  margin-bottom: 0;
+}
+
+.no-results-box a {
+  color: var(--color-link);
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 8px;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.no-results-box a:hover {
+  color: #ff66a3;
+  text-shadow: 0 0 8px rgba(255, 102, 163, 0.6);
+}
+
+/* --- Animações sutis --- */
+@keyframes glow {
+  from { box-shadow: 0 0 5px rgba(0, 255, 255, 0.2); }
+  to { box-shadow: 0 0 20px rgba(0, 255, 255, 0.6); }
+}
+
+.chart-container:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+/* --- Responsividade --- */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 16px;
+  }
+  .charts-grid {
+    gap: 20px;
+  }
+  .chart-container {
+    padding: 16px;
+  }
+}
+
+/* A chave '}' extra que estava aqui foi removida */
