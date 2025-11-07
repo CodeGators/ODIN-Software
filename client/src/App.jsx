@@ -19,12 +19,13 @@ function App() {
     try { return savedCoords ? JSON.parse(savedCoords) : null; }
     catch { sessionStorage.removeItem('odin_map_selectedCoords'); return null; }
   });
-  const [timeseriesData, setTimeseriesData] = useState(null); // Mantém para Dashboard
-  // const [isModalOpen, setIsModalOpen] = useState(false); // --- REMOVIDO ---
+
+  // --- CORREÇÃO 1: MUDADO DE 'null' PARA '[]' ---
+  // (Para acumular múltiplas séries temporais)
+  const [timeseriesData, setTimeseriesData] = useState([]); 
+
   const [imageOverlay, setImageOverlay] = useState(null);
   const [interfaceMode, setInterfaceMode] = useState('sidebar');
-
-  // const nodeRef = useRef(null); // --- REMOVIDO ---
 
   const handleCoordinateChange = (e) => { /* ... (lógica idêntica) ... */
     const { name, value } = e.target;
@@ -56,10 +57,8 @@ function App() {
               setSelectedItemDetails={setSelectedItemDetails}
               selectedCoords={selectedCoords}
               setSelectedCoords={setSelectedCoords}
-              timeseriesData={timeseriesData} // Passa os dados
+              timeseriesData={timeseriesData} // Passa o array
               setTimeseriesData={setTimeseriesData} // Passa a função
-              // isModalOpen={isModalOpen} // --- REMOVIDO ---
-              // setIsModalOpen={setIsModalOpen} // --- REMOVIDO ---
               imageOverlay={imageOverlay}
               setImageOverlay={setImageOverlay}
               interfaceMode={interfaceMode}
@@ -70,8 +69,8 @@ function App() {
             <Route path="/dashboard" element={
                 <DashboardPage
                     searchResults={searchResults}
-                    // collections={/* buscar ou passar collections */}
-                    timeseriesData={timeseriesData} // Passa dados WTSS para Dashboard
+                    timeseriesData={timeseriesData} // Passa o array de dados WTSS
+                    selectedCoords={selectedCoords} // <-- CORREÇÃO 2: Prop Adicionada
                 />}
             />
           </Route>
@@ -86,7 +85,7 @@ function App() {
 // Componente Wrapper para adicionar a classe page-content
 const ContentWrapper = () => (
     <main className="page-content">
-        <Outlet />
+      <Outlet />
     </main>
 );
 

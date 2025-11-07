@@ -1,160 +1,219 @@
-html, body, #root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background-color: #000000; /* Azul em toda a tela */
-}
+/* Arquivo: src/pages/DashboardPage.css */
+/* TEMA PROFISSIONAL (Baseado no index.css) */
 
-#root {
+/* ------------------------------------- */
+/* --- Cabeçalho e Título --- */
+/* ------------------------------------- */
+.dashboard-header {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: #afd9ec; /* garante fundo nas laterais */
-  
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  /* Usa a borda suave da sua paleta */
+  border-bottom: 2px solid var(--borda-suave); 
+  padding-bottom: 1.5rem;
+  gap: 1.5rem;
 }
 
-/* --- Fundo Global (para ocupar 100% da tela) --- */
-html, body {
-  margin: 0;
-  padding: 0;
-  background-color: #E1F5FE; /* Azul claro em toda a página */
-  min-height: 100vh;
+.dashboard-header .title-block {
+  flex: 1;
 }
 
-/* --- Container Principal --- */
-.page-container {
-  padding: 32px;
-  max-width: 1600px;
-  margin: 0 auto;
-  background-color: var(--color-background);
-  min-height: 100vh;
-  color: var(--color-text);
-  font-family: 'Inter', 'Segoe UI', sans-serif;
+/* O h1 já é estilizado pelo .page-container > h1 no seu index.css */
+/* Não precisamos re-estilizar aqui se ele já usa --cor-primaria-dark */
+
+.dashboard-header .title-block p {
+  font-size: 1.05rem;
+  color: var(--texto-cinza); /* Usa o cinza do seu index.css */
+  margin-top: 0;
+  max-width: 600px;
 }
 
-/* --- Títulos --- */
-.page-container h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--color-brand-teal);
-  text-shadow: 0 0 12px rgba(254, 255, 255, 0.5);
-  margin-bottom: 12px;
-  letter-spacing: 0.5px;
+.export-controls {
+  flex-shrink: 0;
+  margin-top: 4px;
 }
 
-.page-container h2 {
-  /* Altere para a cor que desejar. Ex: Ciano Neon */
-  color: #00ffff; 
-  text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
-  
-  /* Mantém o resto dos estilos do index.css, se necessário */
-  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-  padding-bottom: 6px;
-}
-
-.page-container h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: 10px;
-}
-
-/* --- Parágrafos --- */
-.page-container p {
+/* Botão de Exportar usa a cor de REALCE (Laranja) */
+.export-pdf-button {
+  padding: 0.8rem 1.5rem;
   font-size: 1rem;
-  color: var(--color-text-light);
-  margin-bottom: 24px;
-  line-height: 1.6;
-}
-
-/* --- Grid dos Gráficos --- */
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 28px;
-}
-
-/* --- Cards dos Gráficos --- */
-.chart-container {
-  background: linear-gradient(145deg,#00838F, #24ae9e92);
-  
-  /* ANTES (usava uma variável) */
-  /* border: 1px solid var(--color-border); */
-
-  /* DEPOIS (Exemplo: Ciano Neon com 2px de espessura) */
-  border: 2px solid #00ffff;
-  
-  border-radius: var(--border-radius);
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.749);
-  padding: 24px;
+  font-weight: 700;
+  color: var(--branco); /* Texto branco */
+  background-color: var(--cor-realce); /* Laranja */
+  border: 2px solid var(--cor-realce);
+  border-radius: var(--raio-borda);
+  cursor: pointer;
   transition: all 0.3s ease;
-  min-height: 400px;
-  position: relative;
-  color: #368de4;
+  box-shadow: var(--sombra-suave);
+  text-shadow: none;
 }
 
-.chart-container:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 0 25px rgba(0, 255, 255, 0.25),
-              0 0 40px rgba(255, 51, 204, 0.15);
+.export-pdf-button:hover:not(:disabled) {
+  background-color: var(--cor-realce-hover); /* Laranja escuro */
+  border-color: var(--cor-realce-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }
 
-/* Gráfico de linha ocupa toda a largura */
-.chart-container[style*="grid-column: 1 / -1"] {
-  min-height: 460px;
+.export-pdf-button:disabled {
+  background-color: #ccc;
+  color: #777;
+  border-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  text-shadow: none;
 }
 
-/* --- Seção "Sem Resultados" --- */
-.no-results-box {
-  background: rgba(0, 0, 0, 0.6); /* azul translúcido */
-  border-radius: var(--border-radius);
-  border: 2px dashed rgba(0, 0, 0, 0.2);
-  padding: 48px 32px;
+
+/* ------------------------------------- */
+/* --- Grid e Container do Gráfico --- */
+/* ------------------------------------- */
+
+/* O .charts-grid já é definido no seu index.css (Seção 6) */
+/* Não precisamos redefinir */
+
+/* Wrapper para o Card + Botão */
+.chart-grid-item-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  min-height: 250px;
-  color: var(--color-text-light);
-  box-shadow: none;
-  transition: background 0.3s ease;
+  gap: 12px; /* Espaço entre o card e o botão */
 }
 
-.no-results-box:hover {
-  background: rgba(1, 6, 8, 0.9); /* mais forte no hover */
-}
-
-.no-results-box h3 {
-  color: var(--color-text);
-}
-
-.no-results-box p {
-  color: var(--color-text-light);
-  margin-bottom: 0;
-}
-
-.no-results-box a {
-  color: var(--color-link);
-  font-weight: 600;
-  text-decoration: none;
-  margin-top: 8px;
-  transition: color 0.2s ease, text-shadow 0.2s ease;
-}
-
-.no-results-box a:hover {
-  color: #ff66a3;
-  text-shadow: 0 0 8px rgba(255, 102, 163, 0.6);
-}
-
-/* --- Animações sutis --- */
-@keyframes glow {
-  from { box-shadow: 0 0 5px rgba(0, 255, 255, 0.2); }
-  to { box-shadow: 0 0 20px rgba(0, 255, 255, 0.6); }
-}
-
+/* O .chart-container já é definido no seu index.css (Seção 6) */
+/* Mas vamos adicionar um hover bonito que combina com a paleta */
 .chart-container:hover {
-  animation: glow 1s ease-in-out infinite alternate;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 96, 100, 0.15); /* Sombra Ciano sutil */
+  border-color: var(--cor-primaria);
+}
+
+/* A área clicável (fundo branco) já está correta */
+.chart-click-area {
+  flex-grow: 1;
+  padding: 1rem; 
+  box-sizing: border-box;
+  background-color: var(--branco); /* Fundo branco para o gráfico */
+}
+
+.chart-click-area > div {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+
+/* ------------------------------------- */
+/* --- Botão de Seleção --- */
+/* ------------------------------------- */
+.chart-select-button {
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: var(--raio-borda);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* Estilo Padrão: usa a cor PRIMÁRIA (Ciano) */
+  background-color: var(--fundo-sidebar); /* Fundo Ciano bem claro */
+  border: 2px solid var(--fundo-sidebar);
+  color: var(--cor-primaria-dark); /* Texto Ciano escuro */
+}
+
+.chart-select-button:hover {
+  background-color: var(--cor-primaria); /* Fica Ciano sólido no hover */
+  border-color: var(--cor-primaria);
+  color: var(--branco);
+}
+
+/* Estilo Selecionado: usa a cor de REALCE (Laranja) */
+.chart-select-button.selected {
+  background-color: var(--cor-realce); /* Fundo Laranja */
+  color: var(--branco); /* Texto Branco */
+  border-color: var(--cor-realce);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+/* ------------------------------------- */
+/* --- Seção "Sem Resultados" --- */
+/* ------------------------------------- */
+/* O .no-results-box já é definido no seu index.css (Seção 6) */
+/* Os estilos dele (fundo azul claro, borda tracejada) já combinam */
+
+
+/* ------------------------------------- */
+/* --- Estilos do Modal --- */
+/* ------------------------------------- */
+/* (O seu index.css já define .popup-window para o RND no Mapa) */
+/* (Vamos criar estilos de modal separados para o Dashboard) */
+
+.dashboard-modal-overlay {
+  position: fixed; 
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Overlay escuro */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; 
+  padding: 2rem;
+  box-sizing: border-box;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.dashboard-modal-content {
+  background-color: var(--branco); /* Fundo branco */
+  border-radius: var(--raio-borda);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  padding: 2rem;
+  position: relative;
+  width: 90vw; 
+  height: 85vh; 
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  color: #888;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s;
+}
+.dashboard-modal-close:hover {
+  color: var(--cor-erro, #E53935); /* (Opcional: usar cor de erro no hover) */
+}
+
+.dashboard-modal-chart-container {
+  flex-grow: 1; 
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 /* --- Responsividade --- */
@@ -165,9 +224,14 @@ html, body {
   .charts-grid {
     gap: 20px;
   }
-  .chart-container {
-    padding: 16px;
+  .dashboard-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .export-controls {
+    width: 100%;
+  }
+  .export-pdf-button {
+    width: 100%;
   }
 }
-
-/* A chave '}' extra que estava aqui foi removida */

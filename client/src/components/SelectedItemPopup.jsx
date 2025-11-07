@@ -3,7 +3,8 @@ import React from 'react';
 import { Rnd } from "react-rnd";
 import './SelectedItemPopup.css';
 
-const SelectedItemPopup = ({ details, imageUrl, onClose }) => {
+// --- CORREÇÃO 1: Adicione "bounds" aqui para receber a prop ---
+const SelectedItemPopup = ({ details, imageUrl, onClose, bounds }) => {
   if (!details) return null;
 
   const title = details.properties?.title || details.id || "Detalhes do Item";
@@ -23,7 +24,11 @@ const SelectedItemPopup = ({ details, imageUrl, onClose }) => {
       }}
       minWidth={250}
       minHeight={200}
-      bounds=".map-container" // Limita o arraste à área do mapa principal
+
+      // --- CORREÇÃO 2: Use a prop "bounds" que veio do MapPage ---
+      // (O MapPage está enviando "parent" para esta prop)
+      bounds={bounds} 
+      
       dragHandleClassName="popup-header"
       className="popup-window"
       enableResizing={{

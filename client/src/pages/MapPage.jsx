@@ -1,3 +1,4 @@
+// src/pages/MapPage.jsx
 import React, { useState, useEffect } from 'react';
 import {
   MapContainer,
@@ -6,7 +7,7 @@ import {
   useMapEvents,
   useMap,
   GeoJSON,
-  ImageOverlay // Mantido
+  ImageOverlay 
 } from 'react-leaflet';
 import {
   getCollections,
@@ -17,30 +18,52 @@ import {
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import LoadingSpinner from '../components/LoadingSpiner';
-import { Rnd } from "react-rnd"; // Mantido para popup WTSS
+import { Rnd } from "react-rnd"; 
+import TimeseriesChart from '../components/TimeseriesChart'; 
 
 // Importa os componentes de painel, popup e modal
 import FilterPanel from '../components/FilterPanel';
 import ResultsPanel from '../components/ResultsPanel';
 import FullScreenMapLayout from '../layouts/FullScreenMapLayout';
-import SelectedItemPopup from '../components/SelectedItemPopup'; // Mantido
-import TimeseriesChart from '../components/TimeseriesChart';
-// import Modal from '../components/Modal'; // REMOVIDO
+import SelectedItemPopup from '../components/SelectedItemPopup'; 
 
-// --- Mapeamento de Atributos (pode mover para outro arquivo e importar) ---
+// --- Mapeamento de Atributos ---
 const attributesMap = {
-  'S2-16D-2': ['NDVI', 'EVI', 'red', 'green', 'blue', 'nir', 'swir16', 'swir22'],
-  'LANDSAT-16D-1': ['NDVI', 'EVI', 'red', 'green', 'blue', 'nir08', 'swir16', 'swir22'],
+  // Sentinel-2 (Bandas Ópticas + Índices)
+  'S2-16D-2': [
+    'NDVI', 'EVI', 'red', 'green', 'blue', 'nir', 'swir16', 'swir22', 
+    'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B11', 'B12', 'qa'
+  ],
+  // Landsat 8/9 (Bandas Ópticas + Índices)
+  'LANDSAT-16D-1': [
+    'NDVI', 'EVI', 'red', 'green', 'blue', 'nir08', 'swir16', 'swir22', 
+    'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'qa'
+  ],
+  // CBERS WFI
   'CBERS4-WFI-16D-2': ['NDVI', 'EVI', 'BAND13', 'BAND14', 'BAND15', 'BAND16'],
   'CBERS-WFI-8D-1': ['NDVI', 'EVI', 'BAND13', 'BAND14', 'BAND15', 'BAND16'],
+  // CBERS MUX
   'CBERS4-MUX-2M-1': ['NDVI', 'EVI', 'BAND5', 'BAND6', 'BAND7', 'BAND8'],
-  'mod13q1-6.1': ['NDVI', 'EVI', 'red_reflectance', 'NIR_reflectance'],
-  'myd13q1-6.1': ['NDVI', 'EVI', 'red_reflectance', 'NIR_reflectance'],
-  'mod11a2-6.1': ['LST_Day_1km', 'LST_Night_1km'],
-  'myd11a2-6.1': ['LST_Day_1km', 'LST_Night_1km'],
-  // Adicione outras coleções WTSS e seus atributos aqui
+  // MODIS Vegetation Index
+  'mod13q1-6.1': [
+    'NDVI', 'EVI', 'red_reflectance', 'NIR_reflectance', 
+    'blue_reflectance', 'MIR_reflectance', 'pixel_reliability', 'VI_Quality'
+  ],
+  'myd13q1-6.1': [
+    'NDVI', 'EVI', 'red_reflectance', 'NIR_reflectance', 
+    'blue_reflectance', 'MIR_reflectance', 'pixel_reliability', 'VI_Quality'
+  ],
+  // MODIS Land Surface Temperature
+  'mod11a2-6.1': [
+    'LST_Day_1km', 'LST_Night_1km', 'QC_Day', 'QC_Night', 
+    'Emis_31', 'Emis_32'
+  ],
+  'myd11a2-6.1': [
+    'LST_Day_1km', 'LST_Night_1km', 'QC_Day', 'QC_Night', 
+    'Emis_31', 'Emis_32'
+  ],
 };
-export { attributesMap }; // Exporta para FilterPanel/AttributeSelector
+export { attributesMap }; // Exporta para o FilterPanel
 
 
 // --- Configuração dos Ícones ---
@@ -93,10 +116,8 @@ const MapPage = ({
   searchResults, setSearchResults,
   selectedItemDetails, setSelectedItemDetails,
   selectedCoords, setSelectedCoords,
-  timeseriesData, setTimeseriesData, // Recebe timeseriesData
-  // isModalOpen, // REMOVIDO
-  // setIsModalOpen, // REMOVIDO
-  imageOverlay, setImageOverlay, // Recebe imageOverlay e setImageOverlay
+  timeseriesData, setTimeseriesData, // Recebe timeseriesData (AGORA UM ARRAY)
+  imageOverlay, setImageOverlay, 
   interfaceMode
 }) => {
 
@@ -111,7 +132,7 @@ const MapPage = ({
   const [wtssCollections, setWtssCollections] = useState([]);
   const [nonWtssCollections, setNonWtssCollections] = useState([]);
   const [currentStyleKey, setCurrentStyleKey] = useState('navigation');
-  const [isWtssPopupOpen, setIsWtssPopupOpen] = useState(false); // Estado LOCAL para popup WTSS
+  const [openPopups, setOpenPopups] = useState([]); // Array de { id, data }
 
   // --- STORAGE: Carrega valores iniciais ---
   const [startDate, setStartDate] = useState(() => sessionStorage.getItem('odin_map_startDate') || '');
@@ -174,7 +195,7 @@ const MapPage = ({
   // --- useEffect para cleanup (visual) ---
   useEffect(() => { return () => { setSelectedGeometry(null); }; }, []);
 
-  // --- STORAGE: Efeitos para SALVAR ---
+  // --- STORAGE: Efeitos para SALVAR (Já existentes) ---
   useEffect(() => { if (selectedCoords) { try { sessionStorage.setItem('odin_map_selectedCoords', JSON.stringify(selectedCoords)); } catch (e) { console.error("Erro salvar coords:", e); } } else { sessionStorage.removeItem('odin_map_selectedCoords'); } }, [selectedCoords]);
   useEffect(() => { sessionStorage.setItem('odin_map_startDate', startDate); }, [startDate]);
   useEffect(() => { sessionStorage.setItem('odin_map_endDate', endDate); }, [endDate]);
@@ -183,17 +204,31 @@ const MapPage = ({
   useEffect(() => { sessionStorage.setItem('odin_map_simpleFilter', simpleFilter); }, [simpleFilter]);
   useEffect(() => { try { sessionStorage.setItem('odin_map_selectedSatellites', JSON.stringify(selectedSatellites)); } catch (e) { console.error("Erro salvar satellites:", e); } }, [selectedSatellites]);
 
-  // --- useEffect para limpar atributos selecionados inválidos ---
+  // --- useEffect para RE-HIDRATAR o estado local ---
   useEffect(() => {
-    if (primaryWtssCollection) {
-      const validAttributesForCurrent = attributesMap[primaryWtssCollection] || [];
-      const validSelected = selectedAttributes.filter(attr => validAttributesForCurrent.includes(attr));
-      if (JSON.stringify(validSelected) !== JSON.stringify(selectedAttributes)) {
-            console.log(`Filtrando atributos inválidos para ${primaryWtssCollection}. Válidos agora:`, validSelected);
-            setSelectedAttributes(validSelected);
+      if (!searchResults || searchResults.length === 0) {
+          setGroupedResults({});
+          setOpenResultGroups(new Set());
+          return;
       }
-    }
-  }, [primaryWtssCollection, selectedAttributes]);
+      console.log("[Re-hidratando] searchResults existe. Recalculando grupos...");
+      const groups = searchResults.reduce((acc, f) => {
+          const cId = f.collection;
+          const title = collections.find(c => c.id === cId)?.title || cId || 'Resultados';
+          if (!acc[title]) acc[title] = [];
+          acc[title].push(f);
+          return acc;
+      }, {});
+      const sorted = Object.keys(groups).sort().reduce((obj, key) => {
+          obj[key] = groups[key];
+          return obj;
+      }, {});
+      setGroupedResults(sorted);
+      if (Object.keys(sorted).length > 0 && openResultGroups.size === 0) {
+          console.log("[Re-hidratando] Abrindo o primeiro grupo.");
+          setOpenResultGroups(new Set([Object.keys(sorted)[0]]));
+      }
+  }, [searchResults, collections]); 
 
 
   // --- Handlers ---
@@ -202,9 +237,140 @@ const MapPage = ({
   const handleSelectAllWtss = (event) => { const { checked } = event.target; const ids = wtssCollections.map(c => c.id); setSelectedSatellites(prev => { const others = prev.filter(id => !ids.includes(id)); return checked ? [...others, ...ids] : others; }); };
   const handleSelectAllNonWtss = (event) => { const { checked } = event.target; const ids = nonWtssCollections.map(c => c.id); setSelectedSatellites(prev => { const others = prev.filter(id => !ids.includes(id)); return checked ? [...others, ...ids] : others; }); };
 
+
+  // ----------------------------------------------------
+  // --- (CORRIGIDO) FUNÇÃO WTSS (LÓGICA DUPLA) ---
+  // ----------------------------------------------------
+  /**
+   * Busca dados WTSS.
+   * @param {object} item - O item de resultado (com .collection)
+   * @param {boolean} showPopup - Se true, abre o popup local no mapa.
+   * @param {boolean} useSelectedFilter - Se true (busca auto), usa 'selectedAttributes'. Se false (clique manual), pega tudo.
+   */
+  const handleGetTimeseries = async (item, showPopup = false, useSelectedFilter = true) => {
+      if (!selectedCoords || !startDate || !endDate) { 
+          if (showPopup) alert("Selecione um ponto e datas.");
+          return; 
+      }
+
+      let attributesToFetch = [];
+      const supportedAttributes = attributesMap[item.collection] || [];
+      const wantedAttributes = selectedAttributes; // O que o usuário selecionou
+
+      if (!useSelectedFilter) {
+          // Clique Manual: Pega TODOS os atributos suportados
+          attributesToFetch = supportedAttributes;
+      } else {
+          // Busca Automática: Pega a INTERSEÇÃO
+          attributesToFetch = wantedAttributes.filter(attr => 
+              supportedAttributes.includes(attr)
+          );
+      }
+      
+      // Se não houver atributos *relevantes* para buscar, pula
+      if (attributesToFetch.length === 0) { 
+          const msg = `Nenhum atributo relevante para ${item.collection} (Filtro: [${wantedAttributes.join(', ')}], Suportados: [${supportedAttributes.join(', ')}]). Pulando.`;
+          console.warn(`[handleGetTimeseries] ${msg}`);
+          return; 
+      }
+
+      const params = { 
+          coverage: item.collection, 
+          latitude: selectedCoords.lat, 
+          longitude: selectedCoords.lng, 
+          attributes: attributesToFetch.join(','), // Envia apenas os atributos válidos
+          startDate, 
+          endDate 
+      };
+      
+      console.log(`handleGetTimeseries (Popup: ${showPopup}, Filtro: ${useSelectedFilter}): Chamando API com params:`, params);
+      
+      try {
+          const res = await getTimeseries(params);
+          const apiData = res.data; 
+          console.log("handleGetTimeseries: Resposta da API (bruta):", apiData);
+
+          // Filtra a resposta da API (defesa contra atributos zerados)
+          const filteredApiData = {
+              ...apiData,
+              result: {
+                  ...apiData.result,
+                  attributes: (apiData.result.attributes || []).filter(attrItem => 
+                      attributesToFetch.includes(attrItem.attribute)
+                  )
+              }
+          };
+          console.log("handleGetTimeseries: Resposta da API (filtrada):", filteredApiData);
+
+          const newTimeseriesObject = {
+              coverage: item.collection, 
+              data: filteredApiData  // Salva os dados JÁ FILTRADOS
+          };
+
+          // 1. ATUALIZA O ESTADO GLOBAL (Dashboard)
+          setTimeseriesData(prevData => {
+              const currentData = Array.isArray(prevData) ? prevData : []; 
+              const exists = currentData.find(d => d.coverage === item.collection);
+              
+              if (exists) {
+                  return currentData.map(d => 
+                      d.coverage === item.collection ? newTimeseriesObject : d
+                  );
+              } else {
+                  return [...currentData, newTimeseriesObject];
+              }
+          });
+
+          // 2. ATUALIZA O POPUP LOCAL (Se for clique manual)
+          if (showPopup) {
+              const newPopup = { id: item.collection, data: filteredApiData };
+              setOpenPopups(prevPopups => {
+                  const existingIndex = prevPopups.findIndex(p => p.id === newPopup.id);
+                  if (existingIndex > -1) {
+                      const updatedPopups = [...prevPopups];
+                      updatedPopups[existingIndex] = newPopup;
+                      return updatedPopups;
+                  } else {
+                      return [...prevPopups, newPopup];
+                  }
+              });
+          }
+
+      } catch (err) {
+          if (err.response && err.response.status === 400) {
+              console.warn(`[handleGetTimeseries] Erro 400 para ${item.collection}: ${err.response.data.description}`);
+          } else {
+              console.error(`Erro WTSS para ${item.collection}:`, err);
+              if (showPopup) {
+                  const apiErrorDescription = err.response?.data?.description;
+                  alert(`Erro ao buscar série temporal.${apiErrorDescription ? `\nDetalhes: ${apiErrorDescription}` : ''}`);
+              }
+          }
+      }
+  };
+
+  // --- Função wrapper para o clique manual no ResultsPanel ---
+  const handleManualTimeseriesClick = (item) => {
+      // ----------------------------------------------------
+      // --- (CORREÇÃO) Clique manual AGORA ignora os filtros ---
+      // ----------------------------------------------------
+      // (item, showPopup = true, useSelectedFilter = false)
+      handleGetTimeseries(item, true, false); 
+  };
+  
+  // --- Função para fechar um popup específico ---
+  const closePopup = (popupId) => {
+      setOpenPopups(prevPopups => prevPopups.filter(p => p.id !== popupId));
+  };
+
+
+  // ----------------------------------------------------
+  // --- (CORRIGIDO) FUNÇÃO DE BUSCA STAC (PRÉ-FILTRO) ---
+  // ----------------------------------------------------
   const handleSearch = async (event) => {
       event.preventDefault();
       if (!selectedCoords) { alert('Selecione um ponto no mapa.'); return; }
+      
       let idsToSearch = [];
       if (isAdvancedSearch) {
           if (selectedSatellites.length === 0) { alert('Selecione satélites.'); return; }
@@ -216,36 +382,120 @@ const MapPage = ({
           if (!Array.isArray(idsToSearch)) { alert('Erro getIds.'); return; }
           if (idsToSearch.length === 0 && collections.length > 0) { alert(`Grupo "${group.label}" sem satélites.`); }
       }
-      setIsLoading(true); setLoadingProgress(0); setSearchResults([]); setGroupedResults({});
-      setSelectedGeometry(null); setSelectedItemDetails(null); setImageOverlay(null);
+      
+      // ----------------------------------------------------
+      // --- PRÉ-FILTRO DE ATRIBUTOS ---
+      // ----------------------------------------------------
+      console.log(`[Filtro STAC] IDs antes do filtro de atributos: ${idsToSearch.length}`);
+      
+      const idsToSearchFiltered = idsToSearch.filter(collectionId => {
+          const supportedAttributes = attributesMap[collectionId] || [];
+          const isWtssSatellite = wtssCompatibleCollections.includes(collectionId);
+          
+          if (isWtssSatellite) {
+              // É um satélite WTSS. Ele DEVE ter atributos correspondentes.
+              const hasMatchingAttributes = selectedAttributes.some(attr => 
+                  supportedAttributes.includes(attr)
+              );
+              
+              if (!hasMatchingAttributes) {
+                  console.warn(`[Filtro STAC] Removendo WTSS sat: ${collectionId}. Não corresponde ao filtro [${selectedAttributes.join(', ')}].`);
+              }
+              return hasMatchingAttributes;
+          } else {
+              // É um satélite NÃO-WTSS. Mantenha-o.
+              return true;
+          }
+      });
 
-      const collectionsAPI = idsToSearch.map(id => id?.toUpperCase().startsWith('AMAZONIA') ? 'AMAZONIA' : id).filter(Boolean);
-      const uniqueCollections = [...new Set(collectionsAPI)];
-      const BATCH_SIZE = 15; const batches = [];
-      for (let i = 0; i < uniqueCollections.length; i += BATCH_SIZE) { batches.push(uniqueCollections.slice(i, i + BATCH_SIZE)); }
-      console.log(`Buscando ${uniqueCollections.length} coleções em ${batches.length} lotes.`);
+      if (idsToSearch.length > 0 && idsToSearchFiltered.length === 0) {
+          alert("Nenhum dos satélites selecionados possui os atributos WTSS escolhidos. Nenhum resultado será retornado.");
+          setIsLoading(false);
+          return; // Para a busca
+      }
+      console.log(`[Filtro STAC] IDs após filtro de atributos: ${idsToSearchFiltered.length}`);
+      // ----------------------------------------------------
+      // --- FIM DO PRÉ-FILTRO ---
+      // ----------------------------------------------------
+
+      setIsLoading(true); setLoadingProgress(0); 
+      setSearchResults([]); 
+      setGroupedResults({}); 
+      setOpenResultGroups(new Set()); 
+      setSelectedGeometry(null); 
+      setSelectedItemDetails(null); 
+      setImageOverlay(null);
+      setTimeseriesData([]); // Limpa o Dashboard em CADA nova busca
+      
+      let finalResults = []; 
+
       try {
+          // --- (CORREÇÃO) Usa a lista JÁ FILTRADA ---
+          const collectionsAPI = idsToSearchFiltered.map(id => id?.toUpperCase().startsWith('AMAZONIA') ? 'AMAZONIA' : id).filter(Boolean);
+          const uniqueCollections = [...new Set(collectionsAPI)];
+          // ----------------------------------------------------
+
+          const BATCH_SIZE = 15; const batches = [];
+          for (let i = 0; i < uniqueCollections.length; i += BATCH_SIZE) { batches.push(uniqueCollections.slice(i, i + BATCH_SIZE)); }
+          console.log(`Buscando ${uniqueCollections.length} coleções em ${batches.length} lotes.`);
+
           let results = []; let processed = 0;
           for (const batch of batches) {
               if (batch.length === 0) continue;
               const payload = { latitude: selectedCoords.lat, longitude: selectedCoords.lng, collections: batch, startDate, endDate };
               console.log(`Lote ${processed + 1}/${batches.length}: ${batch.join(', ')}`);
               try { const res = await searchStac(payload); if (res?.data) results = [...results, ...res.data]; }
-              catch (batchErr) { console.error(`Erro lote ${processed + 1}:`, batchErr); }
+              catch (batchErr) { console.error(`Erro lote ${processed + 1}:`, batchErr.message); } // Log mais limpo
               processed++; setLoadingProgress((processed / batches.length) * 100);
           }
           const seen = new Set();
-          const final = results.filter(item => { if (!item?.id || !item.geometry || seen.has(item.id)) return false; seen.add(item.id); return true; });
-          setSearchResults(final);
-          const groups = final.reduce((acc, f) => { const cId=f.collection; const title=collections.find(c=>c.id===cId)?.title||cId||'Res'; if(!acc[title])acc[title]=[]; acc[title].push(f); return acc; }, {});
-          const sorted = Object.keys(groups).sort().reduce((obj, key) => {obj[key]=groups[key]; return obj;}, {});
-          setGroupedResults(sorted);
-          setOpenResultGroups(Object.keys(sorted).length > 0 ? new Set([Object.keys(sorted)[0]]) : new Set());
-      } catch (err) { console.error('Erro busca:', err); alert('Erro na busca.'); }
-      finally { setIsLoading(false); setLoadingProgress(0); }
+          
+          finalResults = results.filter(item => { if (!item?.id || !item.geometry || seen.has(item.id)) return false; seen.add(item.id); return true; });
+          
+          setSearchResults(finalResults);
+      
+      } catch (err) { 
+          console.error('Erro busca STAC:', err); 
+          alert('Erro na busca STAC.'); 
+      } finally {
+          setIsLoading(false); 
+          setLoadingProgress(0);
+      }
+
+      // --- (RESTAURADO) Busca automática de WTSS ---
+      if (finalResults.length > 0) {
+          const wtssResultsToFetch = finalResults.filter(item => 
+              wtssCompatibleCollections.includes(item.collection)
+          );
+          
+          const uniqueCollectionsToFetch = Array.from(
+              wtssResultsToFetch.reduce((acc, item) => {
+                  if (!acc.has(item.collection)) {
+                      acc.set(item.collection, item);
+                  }
+                  return acc;
+              }, new Map()).values()
+          ); 
+
+          
+          console.log(`[Busca Automática] Encontradas ${wtssResultsToFetch.length} resultados WTSS em ${uniqueCollectionsToFetch.length} coleções. Iniciando buscas...`);
+          
+          for (const wtssItem of uniqueCollectionsToFetch) {
+              console.log(`[Busca Automática] Buscando item: ${wtssItem.collection}`);
+              // ----------------------------------------------------
+              // --- (CORREÇÃO) Busca automática RESPEITA o filtro ---
+              // ----------------------------------------------------
+              // (item, showPopup = false, useSelectedFilter = true)
+              await handleGetTimeseries(wtssItem, false, true); 
+          }
+          console.log("[Busca Automática] Buscas silenciosas concluídas. Verifique o Dashboard.");
+      }
+      // ----------------------------------------------------
   };
 
+
   const handleResultClick = async (item) => {
+      // Esta função é para o clique no item (mostrar imagem/geometria)
       if (selectedItemDetails?.id === item.id) {
           setSelectedItemDetails(null); setSelectedGeometry(null); setImageOverlay(null); return;
       }
@@ -259,25 +509,6 @@ const MapPage = ({
       } catch (err) { console.error('Erro detalhes:', err); setSelectedItemDetails(null); setImageOverlay(null); setSelectedGeometry(null); }
   };
 
-  const handleGetTimeseries = async (item) => {
-      if (!selectedCoords || !startDate || !endDate) { alert("Selecione ponto e datas."); return; }
-      const validAttributesForRequest = selectedAttributes.filter(attr => (attributesMap[item.collection] || []).includes(attr));
-      if (validAttributesForRequest.length === 0) { alert(`Nenhum atributo selecionado válido para ${item.collection}.`); return; }
-
-      const params = { coverage: item.collection, latitude: selectedCoords.lat, longitude: selectedCoords.lng, attributes: validAttributesForRequest.join(','), startDate, endDate };
-      console.log("handleGetTimeseries: Chamando API com params:", params);
-      try {
-          const res = await getTimeseries(params);
-          console.log("handleGetTimeseries: Resposta da API:", res.data);
-          setTimeseriesData(res.data); // Atualiza PAI
-          setIsWtssPopupOpen(true);    // Abre o POPUP LOCAL
-          console.log("handleGetTimeseries: Chamou setIsWtssPopupOpen(true)");
-      } catch (err) {
-          console.error('Erro WTSS:', err);
-          const apiErrorDescription = err.response?.data?.description;
-          alert(`Erro ao buscar série temporal.${apiErrorDescription ? `\nDetalhes: ${apiErrorDescription}` : ''}`);
-      }
-  };
 
   const toggleResultGroup = (groupName) => {
       setOpenResultGroups(prev => { const n=new Set(prev); n.has(groupName)?n.delete(groupName):n.add(groupName); return n; });
@@ -297,7 +528,7 @@ const MapPage = ({
           <div className="map-style-selector">
               <label htmlFor="style-select">Estilo:</label>
               <select id="style-select" value={currentStyleKey} onChange={(e) => setCurrentStyleKey(e.target.value)}>
-                  {Object.entries(MAPBOX_STYLES).map(([key, { label }]) => ( <option key={key} value={key}>{label}</option> ))}
+                  {Object.entries(MAPBOX_STYLES).map(([key, { label }]) => ( <option key={key} value={key}>{label}</option>))}
               </select>
           </div>
           {/* Mapa Leaflet */}
@@ -306,39 +537,57 @@ const MapPage = ({
               <MapClickHandler onMapClick={handleMapClick} selectedCoords={selectedCoords} />
               <MapUpdater coords={selectedCoords} />
               {selectedGeometry && <GeoJSON key={geoJsonKey} data={selectedGeometry} style={{ fillOpacity: 0, color: '#007bff', weight: 2 }} />}
-              {/* Renderiza ImageOverlay */}
               {imageOverlay && imageOverlay.url && imageOverlay.bounds && ( <ImageOverlay url={imageOverlay.url} bounds={imageOverlay.bounds} opacity={0.7} zIndex={10} /> )}
           </MapContainer>
            {/* Renderiza o Popup Móvel da Imagem */}
            {selectedItemDetails && (
-              <SelectedItemPopup
-                  details={selectedItemDetails}
-                  imageUrl={imageOverlay?.url}
-                  onClose={() => { setSelectedItemDetails(null); setImageOverlay(null); setSelectedGeometry(null); }}
-                  bounds=".map-inner-container" // Certifique-se que esta classe existe no div pai
-              />
-          )}
-          {/* Renderiza o Popup Móvel da Série Temporal */}
-          {isWtssPopupOpen && timeseriesData && (
+             <SelectedItemPopup
+                 details={selectedItemDetails}
+                 imageUrl={imageOverlay?.url}
+                 onClose={() => { setSelectedItemDetails(null); setImageOverlay(null); setSelectedGeometry(null); }}
+                 bounds="parent" 
+             />
+           )}
+          
+          {/* --- (RESTAURADO) Renderiza MÚLTIPLOS Popups --- */}
+          {openPopups.map((popup, index) => (
               <Rnd
-                  default={{ x: 40, y: window.innerHeight - 500, width: 600, height: 400 }}
+                  key={popup.id} // Chave única para o React
+                  default={{ 
+                      x: 40 + (index * 30), 
+                      y: (window.innerHeight - 500) + (index * 30), 
+                      width: 600, 
+                      height: 400 
+                  }}
                   minWidth={300} minHeight={250}
-                  bounds=".map-inner-container"
+                  bounds="parent" 
                   dragHandleClassName="popup-header"
-                  className="popup-window wtss-chart-popup" // Usa as classes
+                  className="popup-window wtss-chart-popup" 
                   enableResizing={{ bottomRight: true, right: true, bottom: true }}
-                  style={{ zIndex: 1005 }}
+                  onDragStart={() => {
+                      setOpenPopups(prev => [
+                          ...prev.filter(p => p.id !== popup.id),
+                          popup
+                      ]);
+                  }}
+                  style={{ zIndex: 1005 + index }} 
                   cancel=".popup-content"
               >
                   <div className="popup-header">
-                      <span className="popup-title">Série Temporal WTSS</span>
-                      <button className="popup-close-button" onClick={() => setIsWtssPopupOpen(false)} title="Fechar">&times;</button>
+                      <span className="popup-title">Série Temporal: {popup.id}</span>
+                      <button 
+                        className="popup-close-button" 
+                        onClick={() => closePopup(popup.id)} // Chama a nova função de fechar
+                        title="Fechar"
+                      >
+                        &times;
+                      </button>
                   </div>
                   <div className="popup-content" style={{ overflow: 'auto' }}>
-                      <TimeseriesChart timeseriesData={timeseriesData} />
+                      <TimeseriesChart timeseriesData={popup.data} />
                   </div>
               </Rnd>
-          )}
+          ))}
       </div>
     </div>
   );
@@ -347,7 +596,13 @@ const MapPage = ({
   const renderSidebarContent = () => (
     <>
       <FilterPanel {...{ collections, startDate, endDate, selectedSatellites, isAdvancedSearch, simpleFilter, logicalGroups, wtssCollections, nonWtssCollections, allWtssSelected, allNonWtssSelected, primaryWtssCollection, selectedAttributes, isLoading, handleSearch, setIsAdvancedSearch, setSimpleFilter, handleSatelliteChange, handleSelectAllWtss, handleSelectAllNonWtss, setStartDate, setEndDate, setSelectedAttributes, attributesMap }} />
-      <ResultsPanel {...{ isLoading, loadingProgress, searchResults, groupedResults, openResultGroups, selectedItemDetails, collections, wtssCompatibleCollections, toggleResultGroup, handleResultClick, handleGetTimeseries }} />
+      <ResultsPanel {...{ 
+          isLoading, loadingProgress, searchResults, groupedResults, openResultGroups, 
+          selectedItemDetails, collections, wtssCompatibleCollections, 
+          toggleResultGroup, 
+          handleResultClick, // <-- Clique para imagem
+          handleGetTimeseries: handleManualTimeseriesClick // <-- Passa a função de clique manual
+      }} />
     </>
   );
 
@@ -361,7 +616,18 @@ const MapPage = ({
           {renderMap()}
         </div>
       ) : (
-        <FullScreenMapLayout {...{ collections, startDate, endDate, selectedSatellites, isAdvancedSearch, simpleFilter, logicalGroups, wtssCollections, nonWtssCollections, allWtssSelected, allNonWtssSelected, primaryWtssCollection, selectedAttributes, isLoading, loadingProgress, searchResults, groupedResults, openResultGroups, selectedItemDetails, wtssCompatibleCollections, handleSearch, setIsAdvancedSearch, setSimpleFilter, handleSatelliteChange, handleSelectAllWtss, handleSelectAllNonWtss, setStartDate, setEndDate, setSelectedAttributes, toggleResultGroup, handleResultClick, handleGetTimeseries, attributesMap }}>
+        <FullScreenMapLayout {...{ 
+            collections, startDate, endDate, selectedSatellites, isAdvancedSearch, 
+            simpleFilter, logicalGroups, wtssCollections, nonWtssCollections, 
+            allWtssSelected, allNonWtssSelected, primaryWtssCollection, selectedAttributes, 
+            isLoading, loadingProgress, searchResults, groupedResults, openResultGroups, 
+            selectedItemDetails, wtssCompatibleCollections, handleSearch, setIsAdvancedSearch, 
+            setSimpleFilter, handleSatelliteChange, handleSelectAllWtss, handleSelectAllNonWtss, 
+            setStartDate, setEndDate, setSelectedAttributes, toggleResultGroup, 
+            handleResultClick, // <-- Clique para imagem
+            handleGetTimeseries: handleManualTimeseriesClick, // <-- Passa a função de clique manual
+            attributesMap 
+        }}>
           {renderMap()}
         </FullScreenMapLayout>
       )
