@@ -74,10 +74,11 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({ iconRetinaUrl, iconUrl, shadowUrl });
 
+// --- DEPOIS (Exemplo: 80x80) ---
 const customIcon = new L.Icon({
-  iconUrl: '/images/pin-icon.png',
-  iconSize: [35, 35],
-  iconAnchor: [17, 35],
+  iconUrl: '/images/pin-icon.png',
+  iconSize: [80, 80],   // Novo tamanho [largura, altura]
+  iconAnchor: [40, 80], // Novo ponto de ancoragem [largura/2, altura]
 });
 
 // --- Constantes ---
