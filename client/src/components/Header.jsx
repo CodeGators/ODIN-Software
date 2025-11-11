@@ -1,27 +1,27 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import './Header.css'; // Vamos modificar este arquivo
+import './Header.css';
 
 // Ícones (mantidos como texto)
 const FullscreenEnterIcon = () => <span className="icon-symbol">&#x26F6;</span>;
 const FullscreenExitIcon = () => <span className="icon-symbol">&#x2922;</span>;
+const HelpIcon = () => <span className="icon-symbol" style={{ fontWeight: 'bold' }}>?</span>; // Novo ícone
 
 const Header = ({
   selectedCoords,
   handleCoordinateChange,
   interfaceMode,
-  toggleInterfaceMode
+  toggleInterfaceMode,
+  onHelpClick // 1. Recebendo a função de abrir o modal
 }) => {
   return (
-    // Adicionamos uma classe 'modern-header' para aplicar os novos estilos
     <header className="main-header modern-header">
       <div className="logo">
         <img
-          src="/odin_logo.png" // Certifique-se que o caminho está correto na pasta public
+          src="/odin_logo.png"
           alt="Logo ODIN"
           className="logo-image"
         />
-        {/* Adicionamos a classe 'site-title' para o gradiente */}
         <h1 className="site-title">ODIN</h1>
       </div>
 
@@ -53,25 +53,37 @@ const Header = ({
       </div>
 
       <nav className="main-nav">
-        {/* Mapa e Botão de Tela Cheia JUNTOS */}
+        {/* Mapa e Toggle Tela Cheia */}
         <NavLink to="/" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
           Mapa
         </NavLink>
+        
         <button
           onClick={toggleInterfaceMode}
-          className="nav-link interface-toggle-button" // Reutiliza nav-link para estilo base
+          className="nav-link interface-toggle-button"
           title={interfaceMode === 'sidebar' ? "Mudar para Tela Cheia" : "Mudar para Vista Padrão"}
         >
           {interfaceMode === 'sidebar' ? <FullscreenEnterIcon /> : <FullscreenExitIcon />}
         </button>
 
-        {/* Outros Links */}
+        {/* Links de Navegação */}
         <NavLink to="/data" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
           Dados
         </NavLink>
         <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
           Dashboard
         </NavLink>
+
+        {/* 2. Novo Botão de Ajuda */}
+        <button 
+          className="nav-link help-button" 
+          onClick={onHelpClick}
+          title="Ajuda / Tutorial"
+          style={{ marginLeft: '10px', cursor: 'pointer' }} // Um pequeno ajuste inline para separar
+        >
+          <HelpIcon />
+        </button>
+
       </nav>
     </header>
   );

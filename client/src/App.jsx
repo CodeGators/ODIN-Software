@@ -1,39 +1,66 @@
 // Arquivo: App.jsx
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react'; // Importe o useEffect
 import { Routes, Route, Outlet } from 'react-router-dom';
 import MapPage from './pages/MapPage';
 import DataPage from './pages/DataPage';
 import DashboardPage from './pages/DashboardPage';
 import Header from './components/Header';
-// import TimeseriesChart from './components/TimeseriesChart'; // Não precisa mais aqui
-// import './components/Modal.css'; // Não precisa mais aqui (a menos que outro componente use)
-// import Draggable from 'react-draggable'; // Não precisa mais aqui
-// import { ResizableBox } from 'react-resizable'; // Não precisa mais aqui
+import WelcomeModal from './components/WelcomeModal'; // O import que você já tinha
+
 import 'react-resizable/css/styles.css'; // Mantenha se SelectedItemPopup usar RND indiretamente
 
+// Chave para o localStorage
+const LOCAL_STORAGE_KEY = 'hasVisitedOdinTutorial';
+
 function App() {
+  // --- Seus Estados Atuais ---
   const [searchResults, setSearchResults] = useState([]);
   const [selectedItemDetails, setSelectedItemDetails] = useState(null);
-  const [selectedCoords, setSelectedCoords] = useState(() => { /* ... (lógica sessionStorage) ... */
+  const [selectedCoords, setSelectedCoords] = useState(() => {
     const savedCoords = sessionStorage.getItem('odin_map_selectedCoords');
     try { return savedCoords ? JSON.parse(savedCoords) : null; }
     catch { sessionStorage.removeItem('odin_map_selectedCoords'); return null; }
   });
-
-  // --- CORREÇÃO 1: MUDADO DE 'null' PARA '[]' ---
-  // (Para acumular múltiplas séries temporais)
   const [timeseriesData, setTimeseriesData] = useState([]); 
-
   const [imageOverlay, setImageOverlay] = useState(null);
   const [interfaceMode, setInterfaceMode] = useState('sidebar');
 
-  const handleCoordinateChange = (e) => { /* ... (lógica idêntica) ... */
+  // --- Nova Lógica para Controlar o Modal de Ajuda ---
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+
+  // 1. Verifica na montagem (apenas uma vez) se o usuário já visitou
+  useEffect(() => {
+    const hasVisited = localStorage.getItem(LOCAL_STORAGE_KEY);
+    
+    // Se a chave não existir, abre o modal
+    if (!hasVisited) {
+      setIsHelpModalOpen(true);
+    }
+  }, []); // O array vazio [] garante que isso rode apenas uma vez
+
+  // 2. Função para o botão de "Ajuda" (no Header)
+  const handleHelpClick = () => {
+    setIsHelpModalOpen(true);
+  };
+
+  // 3. Função para fechar o modal (passada para o WelcomeModal)
+  const handleModalClose = () => {
+    // Salva no localStorage para não mostrar automaticamente de novo
+    localStorage.setItem(LOCAL_STORAGE_KEY, 'true');
+    // Fecha o modal
+    setIsHelpModalOpen(false);
+  };
+  // --- Fim da Lógica do Modal ---
+
+
+  // --- Seus Handlers Atuais ---
+  const handleCoordinateChange = (e) => {
     const { name, value } = e.target;
     const numericValue = value ? parseFloat(value) : null;
     setSelectedCoords(prev => ({ lat: name === 'latitude' ? numericValue : (prev?.lat ?? null), lng: name === 'longitude' ? numericValue : (prev?.lng ?? null) }));
   };
 
-  const toggleInterfaceMode = () => { /* ... (lógica idêntica) ... */
+  const toggleInterfaceMode = () => {
     setInterfaceMode(prevMode => prevMode === 'sidebar' ? 'fullscreen' : 'sidebar');
     setSelectedItemDetails(null);
     setImageOverlay(null);
@@ -46,6 +73,7 @@ function App() {
         handleCoordinateChange={handleCoordinateChange}
         interfaceMode={interfaceMode}
         toggleInterfaceMode={toggleInterfaceMode}
+        onHelpClick={handleHelpClick} // <-- 4. Passa a função para o Header
       />
         <Routes>
           <Route
@@ -57,8 +85,8 @@ function App() {
               setSelectedItemDetails={setSelectedItemDetails}
               selectedCoords={selectedCoords}
               setSelectedCoords={setSelectedCoords}
-              timeseriesData={timeseriesData} // Passa o array
-              setTimeseriesData={setTimeseriesData} // Passa a função
+              timeseriesData={timeseriesData} 
+              setTimeseriesData={setTimeseriesData} 
               imageOverlay={imageOverlay}
               setImageOverlay={setImageOverlay}
               interfaceMode={interfaceMode}
@@ -69,14 +97,18 @@ function App() {
             <Route path="/dashboard" element={
                 <DashboardPage
                     searchResults={searchResults}
-                    timeseriesData={timeseriesData} // Passa o array de dados WTSS
-                    selectedCoords={selectedCoords} // <-- CORREÇÃO 2: Prop Adicionada
+                    timeseriesData={timeseriesData} 
+                    selectedCoords={selectedCoords} 
                 />}
             />
           </Route>
         </Routes>
 
-      {/* --- Modal WTSS REMOVIDO daqui --- */}
+      {/* 5. Renderiza o modal com as props de controle */}
+      <WelcomeModal 
+        isOpen={isHelpModalOpen} 
+        onClose={handleModalClose} 
+      />
 
     </div>
   );
