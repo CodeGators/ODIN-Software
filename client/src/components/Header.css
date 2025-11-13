@@ -1,178 +1,576 @@
-/* Conteúdo COMPLETO e REVISADO para Header.css - Fundo Sólido Original & Novo Gradiente */
+/* 🌟 HEADER ULTRA PREMIUM - DESIGN ESPETACULAR 🌟 */
 
-/* 1. Referência às Variáveis Globais (definidas em index.css) */
+/* ═══════════════════════════════════════════════════════════════════ */
+/* 1. VARIÁVEIS & CORES VIBRANTES */
+/* ═══════════════════════════════════════════════════════════════════ */
 :root {
- 
-  --cor-borda-header: rgba(0, 0, 0, 0.1);
-  --sombra-header: 0 1px 1px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0,0,0,0.15);
-  --raio-borda-header: 8px;
+  --cor-borda-header: rgba(0, 255, 242, 0.15);
+  --raio-borda-header: 16px;
   --font-principal: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  /* --- NOVAS CORES PARA O GRADIENTE DO TÍTULO --- */
-  --gradiente-titulo-inicio: #00ff73; /* Azul claro / Ciano */
-  --gradiente-titulo-fim: #0099ff;    /* Azul mais escuro */
+  
+  /* 🎨 Paleta de Cores Neon */
+  --neon-cyan: #00fff2;
+  --neon-blue: #00d4ff;
+  --neon-purple: #a855f7;
+  --neon-pink: #ff0080;
+  --neon-green: #00ff88;
+  
+
+  --gradient-header: linear-gradient(135deg, 
+    #0a4d5c 0%, 
+    #0d5d6e 25%, 
+    #0a6d7d 50%, 
+    #0d7d8e 75%, 
+    #0a4d5c 100%);
+  
+  --gradient-title: linear-gradient(135deg,
+    var(--neon-cyan) 0%,
+    var(--neon-blue) 50%,
+    var(--neon-purple) 100%);
+  
+  --gradient-button: linear-gradient(135deg,
+    rgba(0, 255, 242, 0.15) 0%,
+    rgba(168, 85, 247, 0.15) 100%);
+  
+  --gradient-active: linear-gradient(135deg,
+    rgba(0, 255, 242, 0.35) 0%,
+    rgba(0, 212, 255, 0.35) 50%,
+    rgba(168, 85, 247, 0.35) 100%);
+  
+  /* ✨ Sombras Épicas */
+  --shadow-mega: 
+    0 4px 6px rgba(0, 0, 0, 0.2),
+    0 10px 20px rgba(0, 0, 0, 0.25),
+    0 20px 40px rgba(0, 0, 0, 0.2),
+    0 0 60px rgba(0, 255, 242, 0.15);
+  
+  --shadow-glow-cyan: 
+    0 0 20px rgba(0, 255, 242, 0.5),
+    0 0 40px rgba(0, 255, 242, 0.3),
+    0 0 60px rgba(0, 212, 255, 0.2);
+  
+  --shadow-glow-purple: 
+    0 0 20px rgba(168, 85, 247, 0.5),
+    0 0 40px rgba(168, 85, 247, 0.3);
 }
 
 
-/* Animação de entrada (mantida) */
-@keyframes fadeInDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-/* 2. Estilo Principal do Header */
+@keyframes slideShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px var(--neon-cyan)) 
+            drop-shadow(0 0 20px var(--neon-blue))
+            drop-shadow(0 0 30px var(--neon-cyan));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px var(--neon-cyan)) 
+            drop-shadow(0 0 40px var(--neon-blue))
+            drop-shadow(0 0 60px var(--neon-purple));
+  }
+}
+
+@keyframes floatBounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes rotateBorder {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* HEADER PRINCIPAL*/
+
 .main-header.modern-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* Fundo com cor primária sólida */
-  background-color: var(--cor-primaria); /* Usa a cor original do seu tema */
-  border-bottom: 1px solid var(--cor-borda-header);
-  color: var(--branco); /* Texto principal branco */
-  padding: 0 25px;
-  height: 70px;
-  width: 100%;
-  box-shadow: var(--sombra-header);
-  animation: fadeInDown 0.5s ease-out;
-  font-family: var(--font-principal);
   position: relative;
+  
+  /* Background com gradiente animado */
+  background: var(--gradient-header);
+  background-size: 200% 200%;
+  animation: gradientFlow 15s ease infinite;
+  
+  border-bottom: 2px solid var(--cor-borda-header);
+  color: var(--branco);
+  padding: 0 35px;
+  height: 85px;
+  width: 100%;
+  box-shadow: var(--shadow-mega);
+  font-family: var(--font-principal);
   z-index: 1010;
+  backdrop-filter: blur(20px) saturate(180%);
+  
+  animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 
-/* 3. Logo e Título */
+/* ✨ Linha de luz no topo */
+.main-header.modern-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--neon-cyan) 50%,
+    transparent 100%
+  );
+  background-size: 50% 100%;
+  animation: slideShimmer 4s ease-in-out infinite;
+  opacity: 0.6;
+  z-index: 2;
+}
+
+.main-header.modern-header > * {
+  position: relative;
+  z-index: 3;
+}
+
+
 .main-header .logo {
   display: flex;
   align-items: center;
-  transition: transform 0.3s ease;
+  gap: 18px;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 8px 16px;
+  border-radius: var(--raio-borda-header);
+  position: relative;
 }
-.main-header .logo:hover {
-  transform: scale(1.03);
+
+.main-header .logo:hover::before {
+  opacity: 0.6;
 }
+
 
 .logo-image {
-  height: 60px;
+  height: 70px;
   width: auto;
-  margin-right: 12px;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4))
+          drop-shadow(0 0 20px rgba(0, 255, 242, 0.3));
+  transition: all 0.5s ease;
 }
 
-/* Título com o NOVO Gradiente Vertical */
+.main-header .logo:hover .logo-image {
+  animation: glowPulse 2s ease-in-out infinite, floatBounce 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.5))
+          drop-shadow(0 0 30px var(--neon-cyan))
+          drop-shadow(0 0 50px var(--neon-blue));
+}
+
+/* 🌟 TÍTULO COM GRADIENTE ANIMADO */
 .site-title {
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  /* --- GRADIENTE ATUALIZADO --- */
-  background-image: linear-gradient(to bottom, var(--gradiente-titulo-inicio) 0%, var(--gradiente-titulo-fim) 100%);
+  font-size: 2.6rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  position: relative;
+  
+  background: var(--gradient-title);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  padding-bottom: 2px;
-  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+  
+  animation: gradientFlow 5s ease infinite;
+  
+  text-shadow: 
+    0 0 40px rgba(0, 255, 242, 0.5),
+    0 0 60px rgba(0, 212, 255, 0.3);
+  
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+  transition: all 0.4s ease;
 }
 
+/* Brilhos nas letras */
+.site-title::before {
+  content: 'ODIN';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--gradient-title);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: blur(1px);
+  opacity: 0.7;
+  animation: gradientFlow 5s ease infinite;
+  z-index: -1;
+}
 
-/* 4. Inputs de Localização (mantidos como na versão anterior) */
+.main-header .logo:hover .site-title {
+  letter-spacing: 3px;
+  text-shadow: 
+    0 0 60px rgba(0, 255, 242, 0.8),
+    0 0 80px rgba(168, 85, 247, 0.6);
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* 5. INPUTS DE LOCALIZAÇÃO - FUTURÍSTICO */
+/* ═══════════════════════════════════════════════════════════════════ */
 .location-inputs-header {
   display: flex;
-  gap: 20px;
+  gap: 28px;
   align-items: center;
   flex-grow: 1;
   justify-content: center;
+  padding: 0 30px;
 }
 
 .location-field-header {
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+/* Borda animada nos inputs */
+.location-field-header::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    var(--neon-cyan),
+    transparent
+  );
+  border-radius: calc(var(--raio-borda-header) + 2px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+
+.location-field-header:focus-within::before {
+  opacity: 1;
+  animation: rotateBorder 3s linear infinite;
 }
 
 .location-field-header label {
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.7rem;
-  font-weight: 500;
-  margin-bottom: 3px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 6px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1.5px;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 10px rgba(0, 255, 242, 0.3);
+  transition: all 0.3s ease;
+}
+
+.location-field-header:focus-within label {
+  color: var(--neon-cyan);
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.6),
+    0 0 20px var(--neon-cyan);
 }
 
 .location-field-header input {
-  background-color: var(--cor-primaria-dark);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(15px) saturate(150%);
+  border: 2px solid rgba(255, 255, 255, 0.1);
   color: var(--branco);
   border-radius: var(--raio-borda-header);
-  padding: 7px 10px;
+  padding: 12px 16px;
   font-family: var(--font-principal);
-  font-size: 0.9rem;
-  width: 160px;
-  transition: all 0.2s ease;
-  box-shadow: inset 0 1px 1px rgba(0,0,0,0.1);
+  font-size: 1rem;
+  font-weight: 600;
+  width: 200px;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 
+    inset 0 2px 6px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
 }
 
 .location-field-header input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 400;
+}
+
+.location-field-header input:hover {
+  background: rgba(0, 0, 0, 0.45);
+  border-color: rgba(0, 255, 242, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 
+    inset 0 2px 6px rgba(0, 0, 0, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(0, 255, 242, 0.2);
 }
 
 .location-field-header input:focus {
   outline: none;
-  background-color: rgba(0, 0, 0, 0.2);
-  border-color: var(--cor-realce);
-  box-shadow: inset 0 1px 1px rgba(0,0,0,0.1), 0 0 0 2px rgba(255, 152, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5);
+  border-color: var(--neon-cyan);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.4),
+    0 0 0 4px rgba(0, 255, 242, 0.2),
+    0 6px 20px rgba(0, 255, 242, 0.4),
+    0 12px 40px rgba(0, 212, 255, 0.3),
+    0 0 60px rgba(168, 85, 247, 0.2);
+  color: var(--neon-cyan);
 }
 
-/* Remove setas do input number (mantido) */
+/* Remove setas do input number */
 .location-field-header input::-webkit-outer-spin-button,
-.location-field-header input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.location-field-header input[type=number] { -moz-appearance: textfield; }
+.location-field-header input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.location-field-header input[type=number] {
+  -moz-appearance: textfield;
+}
 
-
-/* 5. Navegação e Botões (mantidos como na versão anterior) */
+/* ═══════════════════════════════════════════════════════════════════ */
+/* 6. NAVEGAÇÃO - DESIGN ESPACIAL */
+/* ═══════════════════════════════════════════════════════════════════ */
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .nav-link {
   color: var(--branco);
-  background-color: transparent;
+  background: var(--gradient-button);
+  backdrop-filter: blur(10px) saturate(180%);
   text-decoration: none;
-  padding: 8px 14px;
+  padding: 12px 24px;
   border-radius: var(--raio-borda-header);
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 1.05rem;
+  font-weight: 700;
   position: relative;
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-  border: none;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
   display: flex;
   align-items: center;
-  opacity: 0.85;
+  overflow: hidden;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
 }
 
-.nav-link::after { display: none; }
+/* Efeito de onda de luz */
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+  z-index: 0;
+}
+
+.nav-link:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Partículas brilhantes */
+.nav-link > * {
+  position: relative;
+  z-index: 2;
+}
 
 .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background: var(--gradient-active);
+  border-color: var(--neon-cyan);
   color: var(--branco);
-  transform: translateY(-1px);
-  opacity: 1;
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.3),
+    0 12px 40px rgba(0, 255, 242, 0.3),
+    0 0 60px rgba(0, 255, 242, 0.2);
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 20px var(--neon-cyan);
 }
 
 .nav-link.active {
-  background-color: rgba(255, 255, 255, 0.15);
-  font-weight: 600;
+  background: var(--gradient-active);
+  border-color: var(--neon-cyan);
+  font-weight: 800;
   color: var(--branco);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    0 8px 24px rgba(0, 255, 242, 0.4),
+    0 0 40px rgba(0, 255, 242, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 15px var(--neon-cyan);
+}
+
+.nav-link.active::after {
   opacity: 1;
 }
+
 .nav-link.active:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-5px) scale(1.08);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    0 16px 48px rgba(0, 255, 242, 0.5),
+    0 0 80px rgba(168, 85, 247, 0.3);
 }
 
-
-/* Botão de toggle específico */
+/* 🎯 BOTÃO DE TOGGLE ESPECIAL */
 .interface-toggle-button {
-  padding: 8px 10px;
-  margin-left: 5px;
-  margin-right: 5px;
+  padding: 12px 14px;
+  margin: 0 10px;
+  background: var(--gradient-button);
+  min-width: 50px;
 }
+
+.interface-toggle-button:hover {
+  background: var(--gradient-active);
+  transform: translateY(-4px) rotate(10deg) scale(1.1);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.3),
+    0 0 40px rgba(0, 255, 242, 0.5);
+}
+
+/* 🆘 BOTÃO DE AJUDA */
+.help-button {
+  margin-left: 10px;
+  background: linear-gradient(135deg,
+    rgba(168, 85, 247, 0.2) 0%,
+    rgba(255, 0, 128, 0.2) 100%);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.help-button:hover {
+  background: linear-gradient(135deg,
+    rgba(168, 85, 247, 0.4) 0%,
+    rgba(255, 0, 128, 0.4) 100%);
+  border-color: var(--neon-purple);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.3),
+    0 12px 40px rgba(168, 85, 247, 0.5),
+    0 0 60px var(--neon-pink);
+}
+
 .icon-symbol {
   color: inherit;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   line-height: 1;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.nav-link:hover .icon-symbol {
+  transform: scale(1.2) rotate(5deg);
+  filter: drop-shadow(0 0 10px var(--neon-cyan));
+}
+
+.help-button:hover .icon-symbol {
+  transform: scale(1.3) rotate(-5deg);
+  filter: drop-shadow(0 0 10px var(--neon-purple));
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* 7. RESPONSIVIDADE */
+/* ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 1200px) {
+  .location-field-header input {
+    width: 160px;
+    font-size: 0.9rem;
+  }
+  
+  .site-title {
+    font-size: 2.2rem;
+  }
+  
+  .nav-link {
+    padding: 10px 18px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-header.modern-header {
+    padding: 0 20px;
+    height: 75px;
+  }
+  
+  .location-inputs-header {
+    gap: 16px;
+  }
+  
+  .location-field-header input {
+    width: 140px;
+  }
+  
+  .nav-link {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+  }
+  
+  .site-title {
+    font-size: 1.8rem;
+  }
+  
+  .logo-image {
+    height: 55px;
+  }
 }

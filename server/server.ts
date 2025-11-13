@@ -1,3 +1,4 @@
+// server/server.ts
 import express, { Request, Response } from 'express';
 import axios from 'axios';
 import cors from 'cors';
@@ -113,7 +114,19 @@ app.post('/stac-search', async (req: Request<{}, {}, StacSearchRequestBody>, res
              const props = f.properties;
              const dateString: string | undefined = props.datetime || props.start_datetime || props.end_datetime;
              const date = dateString ? dateString.split('T')[0] : 'N/A';
-             return { id: f.id, collection: f.collection, geometry: f.geometry, date: date, cloud_cover: props['eo:cloud_cover'] };
+             
+             // --- ALTERAÇÃO AQUI ---
+             const thumbnail = f.assets?.thumbnail?.href;
+             // ---------------------
+
+             return { 
+                id: f.id, 
+                collection: f.collection, 
+                geometry: f.geometry, 
+                date: date, 
+                cloud_cover: props['eo:cloud_cover'],
+                thumbnail: thumbnail // <-- E AQUI
+             };
         });
         
         console.log(`${requestId} - Sucesso! Retornando ${simplifiedFeatures.length} resultados.`);

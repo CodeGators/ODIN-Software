@@ -16,7 +16,7 @@ import { Line } from 'react-chartjs-2';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
-import './DashboardPage.css'; // Este é o ÚNICO arquivo CSS que você precisa
+import './DashboardPage.css'; 
 
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
@@ -38,98 +38,227 @@ const generateColor = (index) => {
     return { background: `hsla(${hue}, 70%, 60%, 0.7)`, border: `hsla(${hue}, 70%, 60%, 1)` };
 };
 
-/**
- * Função auxiliar para processar UM objeto de série temporal
- */
-const processTimeseries = (tsObject) => {
-    // ... (lógica de processamento idêntica)
+// --- Função para encontrar a thumbnail (CORRETA) ---
+function findClosestStacThumbnail(wtssDateStr, stacResults) {
+    if (!stacResults || stacResults.length === 0 || !wtssDateStr) return null;
+    try {
+        const wtssTime = new Date(wtssDateStr).getTime();
+        if (isNaN(wtssTime)) return null;
+        let closestItem = null;
+        let minDiff = Infinity;
+        for (const item of stacResults) {
+            if (item.thumbnail && item.date) {
+                const itemTime = new Date(item.date).getTime();
+                if (isNaN(itemTime)) continue;
+                const diff = Math.abs(wtssTime - itemTime);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestItem = item;
+                }
+            }
+        }
+        const MAX_DIFF_DAYS = 30 * 24 * 60 * 60 * 1000; 
+        if (closestItem && minDiff < MAX_DIFF_DAYS) {
+            return closestItem.thumbnail;
+        }
+        return null; 
+    } catch (e) {
+        console.error("Erro no findClosestStacThumbnail:", e);
+        return null;
+    }
+}
+
+// --- Função de processamento (CORRIGIDA) ---
+const processTimeseries = (tsObject, stacResults) => { 
     const wtssCollectionId = tsObject?.coverage;
     const wtssResult = tsObject?.data?.result;
     if (!wtssCollectionId || !wtssResult?.timeline || !Array.isArray(wtssResult.attributes) || wtssResult.attributes.length === 0) return null;
+    
     try {
         const labels = wtssResult.timeline.map(dateStr => new Date(dateStr).toLocaleDateString());
         const attributesArray = wtssResult.attributes;
+        
         const datasets = attributesArray.map((attrItem, index) => {
             if (!attrItem || typeof attrItem.attribute !== 'string' || !Array.isArray(attrItem.values)) return null;
-            const attrName = attrItem.attribute;
+            
+            const attrName = attrItem.attribute; // "NDVI" ou "EVI"
             const valuesArray = attrItem.values;
             const colorInfo = generateColor(index);
             const needsScaling = ['NDVI', 'EVI'].includes(attrName);
-            const values = valuesArray.map(v => (v === null || v === undefined) ? null : (needsScaling ? v / 10000 : v));
+
+            const values = valuesArray.map((v, i) => {
+                const originalDate = wtssResult.timeline[i];
+                // Correção do "mergulho"
+                const cleanValue = (v === null || v === undefined || v <= -3000) ? null : (needsScaling ? v / 10000 : v);
+                
+                return {
+                    x: new Date(originalDate).toLocaleDateString(),
+                    y: cleanValue, 
+                    thumbnail: findClosestStacThumbnail(originalDate, stacResults)
+                };
+            });
+
             return {
-                label: `${attrName} (${wtssCollectionId})`,
-                data: values,
+                label: attrName, // Label correta
+                data: values, 
                 borderColor: colorInfo.border,
                 backgroundColor: colorInfo.background,
                 tension: 0.1,
                 fill: false,
-                spanGaps: true,
+                spanGaps: true, 
             };
         }).filter(Boolean); 
+
         if (datasets.length === 0) return null;
         return { labels, datasets }; 
+
     } catch (e) {
         console.error(`Erro CRÍTICO ao processar dados WTSS para ${wtssCollectionId}:`, e, tsObject);
         return null;
     }
 };
 
-/**
- * Função auxiliar para gerar opções do gráfico
- */
-const wtssChartOptions = (collectionId) => ({
-    // ... (lógica de opções idêntica)
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-        legend: { 
-            position: 'top', 
-            labels: { 
+
+// --- Lógica de Opções do Gráfico (CORRIGIDA) ---
+const getChartOptions = (collectionId) => {
+    
+    // Função helper para criar/encontrar o div do tooltip
+    const getOrCreateTooltip = (chart) => {
+        let tooltipEl = chart.canvas.parentNode.querySelector('div.chartjs-tooltip');
+        if (!tooltipEl) {
+            tooltipEl = document.createElement('div');
+            tooltipEl.className = 'chartjs-tooltip'; 
+            tooltipEl.style.opacity = '0';
+            tooltipEl.style.position = 'absolute'; 
+            tooltipEl.style.background = 'rgba(0,0,0,0.85)';
+            tooltipEl.style.color = 'white';
+            tooltipEl.style.borderRadius = '5px';
+            tooltipEl.style.padding = '10px';
+            tooltipEl.style.pointerEvents = 'none';
+            tooltipEl.style.transition = 'opacity 0.2s';
+            tooltipEl.style.zIndex = '9999';
+            tooltipEl.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+            tooltipEl.style.fontSize = '0.9rem';
+            
+            chart.canvas.parentNode.appendChild(tooltipEl);
+        }
+        return tooltipEl;
+    };
+
+    const externalTooltipHandler = (context) => {
+        const { chart, tooltip } = context;
+        const tooltipEl = getOrCreateTooltip(chart);
+
+        if (tooltip.opacity === 0) {
+            tooltipEl.style.opacity = '0';
+            return;
+        }
+
+        // Como o modo é 'nearest', dataPoints[0] AGORA é o ponto correto
+        const dataPoint = tooltip.dataPoints[0]?.raw;
+        if (!dataPoint) return;
+
+        const date = tooltip.dataPoints[0].label;
+        const value = tooltip.dataPoints[0].formattedValue;
+        const label = tooltip.dataPoints[0].dataset.label || ''; 
+        const color = tooltip.dataPoints[0].dataset.borderColor;
+
+        let innerHtml = `
+            <div style="margin-bottom: 5px; text-align: left;">
+                <strong style="color: ${color};">${label}</strong>
+                <div>${date}: ${value}</div>
+            </div>
+        `;
+        
+        if (dataPoint.thumbnail) {
+            innerHtml += `<img src="${dataPoint.thumbnail}" alt="Thumbnail" style="width: 150px; height: auto; border-radius: 3px; display: block;" />`;
+        } else {
+            innerHtml += `<span style="font-size: 0.8rem; color: #ccc;">(Sem thumbnail próxima)</span>`;
+        }
+
+        tooltipEl.innerHTML = innerHtml;
+        
+        const { offsetLeft, offsetTop } = chart.canvas;
+        tooltipEl.style.opacity = '1';
+        tooltipEl.style.left = offsetLeft + tooltip.caretX + 'px';
+        tooltipEl.style.top = offsetTop + tooltip.caretY + 'px';
+        tooltipEl.style.transform = 'translate(-50%, -110%)'; 
+    };
+
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+        // --- ALTERAÇÃO CRÍTICA AQUI ---
+        interaction: {
+            mode: 'nearest', // Antes: 'index'
+            intersect: false,
+        },
+        // ------------------------------
+        plugins: {
+            legend: { 
+                position: 'top', 
+                labels: { 
+                    color: '#000000',
+                    boxWidth: 20, 
+                    padding: 10
+                } 
+            },
+            title: {
+                display: true,
+                text: `Série Temporal: ${collectionId}`, 
                 color: '#000000',
-                boxWidth: 20, 
-                padding: 10
-            } 
+                font: { size: 16 }
+            },
+            tooltip: {
+                enabled: false, 
+                position: 'nearest',
+                external: externalTooltipHandler
+            }
         },
-        title: {
-            display: true,
-            text: `Série Temporal: ${collectionId}`, 
-            color: '#000000',
-            font: { size: 16 }
-        },
-        tooltip: {
-            callbacks: {
-                label: function(context) {
-                    let label = context.dataset.label || '';
-                    if (label) { label += ': '; }
-                    if (context.parsed.y !== null) { label += context.parsed.y.toFixed(4); }
-                    return label;
+        scales: {
+            y: { 
+                ticks: { color: '#000000' }, 
+                grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                title: {
+                    display: true,
+                    text: 'Valor do Índice', // Rótulo do Eixo Y
+                    color: '#000000'
+                }
+            },
+            x: { 
+                ticks: { 
+                    color: '#000000',
+                    autoSkip: true,       
+                    maxTicksLimit: 12     
+                }, 
+                grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                title: {
+                    display: true,
+                    text: 'Data', // Rótulo do Eixo X
+                    color: '#000000'
                 }
             }
         }
-    },
-    scales: {
-        y: { beginAtZero: false, ticks: { color: '#000000' }, grid: { color: 'rgba(0, 0, 0, 0.1)' } },
-        x: { ticks: { color: '#000000' }, grid: { color: 'rgba(0, 0, 0, 0.1)' } }
-    }
-});
+    };
+};
+// --- (FIM DA FUNÇÃO DE OPÇÕES) ---
 
 
 // --- Componente DashboardPage ---
-const DashboardPage = ({ timeseriesData = [], selectedCoords }) => { 
+const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = [] }) => { 
     
     const [selectedChartData, setSelectedChartData] = useState(null);
     const [selectedCharts, setSelectedCharts] = useState(new Set());
     const [isExporting, setIsExporting] = useState(false);
     const chartRefs = useRef({});
 
-    // Processa TODOS os dados de 'timeseriesData'
     const chartsToRender = useMemo(() => {
         if (!Array.isArray(timeseriesData)) return [];
         return timeseriesData.map(tsObject => ({
             id: tsObject.coverage,
-            chartData: processTimeseries(tsObject) 
+            chartData: processTimeseries(tsObject, searchResults) 
         })).filter(c => c.chartData !== null); 
-    }, [timeseriesData]); 
+    }, [timeseriesData, searchResults]); 
 
     const closeModal = () => {
         setSelectedChartData(null);
@@ -153,19 +282,16 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords }) => {
             alert("Por favor, selecione pelo menos um gráfico para exportar.");
             return;
         }
-
         setIsExporting(true);
         const pdf = new jsPDF('p', 'mm', 'a4');
         const margin = 15;
         const pdfWidth = pdf.internal.pageSize.getWidth() - (margin * 2);
         const pdfPageHeight = pdf.internal.pageSize.getHeight();
         let currentY = margin;
-
         pdf.setFontSize(18);
         pdf.setFont('helvetica', 'bold');
         pdf.text('Relatório de Séries Temporais', margin, currentY);
         currentY += 10; 
-
         if (selectedCoords && selectedCoords.lat != null && selectedCoords.lng != null) {
             pdf.setFontSize(12);
             pdf.setFont('helvetica', 'normal');
@@ -176,10 +302,8 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords }) => {
             currentY += 6; 
             pdf.text(`Longitude: ${selectedCoords.lng.toFixed(6)}`, margin + 5, currentY);
         }
-        
         currentY += 12; 
         const chartsToExport = Array.from(selectedCharts);
-
         try {
             for (let i = 0; i < chartsToExport.length; i++) {
                 const chartId = chartsToExport[i];
@@ -213,12 +337,15 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords }) => {
 
     return (
         <div className="page-container">
+            {/* O Tooltip div será criado dinamicamente pela função getChartOptions */}
+
             {/* --- Cabeçalho Estruturado --- */}
             <div className="dashboard-header">
                 <div className="title-block">
                     <h1>Análise de Séries Temporais (WTSS)</h1>
                     <p>
                         Selecione e exporte os gráficos acumulados de suas buscas.
+                        Passe o mouse sobre os pontos do gráfico para ver a thumbnail da imagem STAC mais próxima.
                     </p>
                 </div>
                 <div className="export-controls">
@@ -252,12 +379,8 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords }) => {
                 {chartsToRender.map(({ id, chartData }) => {
                     const isSelected = selectedCharts.has(id);
                     return (
-                        // -------------------------------------------
-                        // --- (NOVA ESTRUTURA) Wrapper do Gráfico ---
-                        // -------------------------------------------
                         <div key={id} className="chart-grid-item-wrapper">
                             
-                            {/* O Card do Gráfico (clicável para o modal) */}
                             <div
                                 className="chart-container" 
                                 onClick={() => setSelectedChartData({ id, chartData })}
@@ -270,12 +393,11 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords }) => {
                                 >
                                     <Line 
                                         data={chartData} 
-                                        options={wtssChartOptions(id)}
+                                        options={getChartOptions(id)} 
                                     />
                                 </div>
                             </div>
                             
-                            {/* O Botão de Seleção (EXTERNO) */}
                             <button
                                 className={`chart-select-button ${isSelected ? 'selected' : ''}`}
                                 onClick={() => handleSelectionChange(id)}
@@ -288,7 +410,7 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords }) => {
                 })}
             </div>
 
-            {/* --- Modal (sem alterações) --- */}
+            {/* --- Modal --- */}
             {selectedChartData && (
                 <div className="dashboard-modal-overlay" onClick={closeModal}>
                     <div className="dashboard-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -296,7 +418,7 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords }) => {
                         <div className="dashboard-modal-chart-container">
                             <Line 
                                 data={selectedChartData.chartData} 
-                                options={wtssChartOptions(selectedChartData.id)} 
+                                options={getChartOptions(selectedChartData.id)} 
                             />
                         </div>
                     </div>
@@ -305,6 +427,6 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords }) => {
 
         </div>
     );
-}; // Fim do DashboardPage
+}; 
 
 export default DashboardPage;

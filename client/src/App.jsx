@@ -96,9 +96,9 @@ function App() {
             <Route path="/data" element={<DataPage searchResults={searchResults} />} />
             <Route path="/dashboard" element={
                 <DashboardPage
-                    searchResults={searchResults}
                     timeseriesData={timeseriesData} 
-                    selectedCoords={selectedCoords} 
+                    selectedCoords={selectedCoords}
+                    searchResults={searchResults} // <-- ALTERAÇÃO AQUI
                 />}
             />
           </Route>

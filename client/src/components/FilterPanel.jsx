@@ -1,5 +1,4 @@
 import React from 'react';
-import AttributeSelector from './AttributeSelector';
 import LoadingSpinner from './LoadingSpiner'; // Pode ser necessário se o botão de busca mostrar loading
 
 // Recebe todas as props necessárias do MapPage
@@ -15,8 +14,6 @@ const FilterPanel = ({
   nonWtssCollections, // Para modo avançado
   allWtssSelected, // Helper para modo avançado
   allNonWtssSelected, // Helper para modo avançado
-  primaryWtssCollection, // Para AttributeSelector
-  selectedAttributes, // Para AttributeSelector
   isLoading, // Para desabilitar botão
   
   // Funções handler
@@ -28,7 +25,6 @@ const FilterPanel = ({
   handleSelectAllNonWtss, // Para modo avançado
   setStartDate,
   setEndDate,
-  setSelectedAttributes, // Para AttributeSelector
 }) => {
 
   return (
@@ -169,16 +165,6 @@ const FilterPanel = ({
           />
         </div>
       </div>
-
-      {/* Seletor de Atributos WTSS */}
-      {primaryWtssCollection && (
-        <AttributeSelector
-          selectedCollection={primaryWtssCollection}
-          selectedAttributes={selectedAttributes}
-          setSelectedAttributes={setSelectedAttributes}
-        />
-      )}
-
       {/* Botão Buscar */}
       <button
         type="submit"

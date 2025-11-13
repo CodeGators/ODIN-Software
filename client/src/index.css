@@ -1,6 +1,3 @@
-/* Conteúdo completo para index.css */
-
-/* 1. FUNDAMENTO DO TEMA */
 :root {
   --cor-primaria: #00838F;
   --cor-primaria-dark: #006064;
@@ -16,7 +13,7 @@
   --raio-borda: 8px;
 }
 
-/* 2. CONFIGURAÇÕES GLOBAIS */
+/*CONFIGURAÇÕES GLOBAIS */
 * {
   margin: 0;
   padding: 0;
@@ -41,9 +38,8 @@ body {
 /* Usado pelo <ContentWrapper> no App.jsx */
 .page-content {
   flex-grow: 1; /* Ocupa espaço vertical restante */
-  overflow-y: auto; /* <<-- PERMITE SCROLL VERTICAL AQUI */
+  overflow-y: auto;
   background-color: var(--branco); /* Fundo branco padrão */
-  /* Remove height calc daqui */
 }
 
 /* 3. LAYOUT DA PÁGINA DO MAPA */
@@ -229,8 +225,7 @@ tbody tr:hover { background-color: var(--fundo-sidebar); }
 .attribute-list-box li label strong { color: var(--cor-primaria-dark); }
 
 
-/* --- Seção 12 - ESTILOS PARA POPUP RND (Paleta) --- */
-/* ... (estilos idênticos) ... */
+
 .popup-window { background-color: var(--branco); border-radius: var(--raio-borda); box-shadow: 0 5px 18px rgba(0, 0, 0, 0.25); overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--cor-primaria); }
 .popup-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background-color: var(--cor-primaria); color: var(--branco); cursor: grab; user-select: none; border-radius: calc(var(--raio-borda) - 1px) calc(var(--raio-borda) - 1px) 0 0; }
 .popup-title { font-weight: 600; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; margin-right: 10px; }
@@ -247,22 +242,20 @@ tbody tr:hover { background-color: var(--fundo-sidebar); }
 .react-resizable-handle { position: absolute; width: 20px; height: 20px; bottom: 0; right: 0; background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2IDYiIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiNmZmZmZmYwMCIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iNnB4Ij48ZyBvcGFjaXR5PSIwLjMwMiI+PHBhdGggZD0iTSA2IDYgTCAwIDYgTCAwIDQuMiBMIDQgNC4yIEwgNC4yIDQuMiBMIDQuMiAwIEwgNiAwIEwgNiA2IEwgNiA2IFoiIGZpbGw9IiMwMDAwMDAiLz48L2c+PC9zdmc+'); background-position: bottom right; padding: 0 3px 3px 0; background-repeat: no-repeat; background-origin: content-box; box-sizing: border-box; cursor: se-resize; }
 
 
-/* --- Seção 13 - Estilos para Seletor de Estilo do Mapa (PALETA) --- */
-/* ... (estilos idênticos) ... */
+
 .map-style-selector { position: absolute; top: 10px; right: 10px; z-index: 1000; background-color: var(--branco); padding: 6px 12px; border-radius: var(--raio-borda); font-family: 'Roboto', sans-serif; font-size: 0.9rem; box-shadow: var(--sombra-suave); cursor: pointer; display: flex; align-items: center; border: 1px solid var(--borda-suave); }
 .map-style-selector label { margin-right: 8px; cursor: pointer; font-weight: 600; color: var(--cor-primaria-dark); }
 .map-style-selector select { border: none; background: transparent; cursor: pointer; font-weight: 500; color: var(--texto-escuro); padding: 2px 4px; appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--texto-cinza) 50%), linear-gradient(135deg, var(--texto-cinza) 50%, transparent 50%); background-position: calc(100% - 15px) center, calc(100% - 10px) center; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 25px; }
 .map-style-selector select:focus { outline: none; border-radius: 3px; box-shadow: 0 0 0 2px var(--cor-realce-hover); }
 
-/* --- Seção 14 - Ajustes Finais Dashboard/Data --- */
-/* (Esta seção é redundante com a Seção 6) */
+/* Ajustes Finais Dashboard/Data --- */
+
 .page-container > h2 + .chart-container,
 .page-container > h2 + .no-results-box {
   grid-column: 1 / -1; /* Garante ocupar toda a largura se dentro de um grid */
 }
 
-/* --- Seção 15 - Estilos para Botões de Ação (WTSS, JSON) --- */
-/* (Adicionado da resposta anterior) */
+/*Estilos para Botões de Ação (WTSS, JSON) */
 .download-button-table,
 .download-json-button { display: inline-flex; align-items: center; justify-content: center; padding: 5px 12px; border: none; border-radius: 6px; min-width: 60px; font-size: 0.8rem; font-weight: 600; color: var(--branco); text-align: center; white-space: nowrap; cursor: pointer; transition: background-color 0.2s, transform 0.1s; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
 .download-button-table:hover, .download-json-button:hover { transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); }
@@ -277,3 +270,54 @@ tbody tr:hover { background-color: var(--fundo-sidebar); }
 /* Ajuste de Alinhamento DENTRO da Tabela */
 .table-container td .download-button-table, .table-container td .download-json-button { margin: 2px 4px; }
 .table-container td.actions-cell { text-align: center; }
+
+.chartjs-tooltip {
+  /* Propriedades básicas, já definidas no JS, mas bom ter aqui para override */
+  opacity: 0;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  border-radius: 5px;
+  padding: 8px;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-size: 0.9rem;
+
+  /* Adições para melhorar a visualização */
+  max-width: 250px; /* Limita a largura máxima do tooltip */
+  text-align: center; /* Centraliza o texto e a imagem */
+  display: flex; /* Permite controle flexível do conteúdo */
+  flex-direction: column; /* Organiza itens em coluna */
+  align-items: center; /* Centraliza itens horizontalmente */
+  gap: 5px; /* Espaçamento entre os itens do tooltip */
+}
+
+.chartjs-tooltip img {
+  /* Garante que a imagem se ajuste ao tooltip e não cause excesso de fundo */
+  max-width: 100%; /* A imagem não excederá a largura do tooltip */
+  height: auto; /* Mantém a proporção da imagem */
+  border-radius: 3px; /* Bordas arredondadas para a thumbnail */
+  display: block; /* Remove espaços extras comuns em imagens inline */
+}
+
+/* Estilos para a mensagem de "Sem thumbnail" */
+.chartjs-tooltip span {
+  font-size: 0.8rem;
+  color: #ccc;
+  display: block; /* Garante que a mensagem ocupe sua própria linha */
+  margin-top: 5px; /* Adiciona um pequeno espaçamento acima da mensagem */
+}
+
+/* Estilo para o título do dataset no tooltip */
+.chartjs-tooltip div strong {
+  display: block; /* Garante que o label ocupe sua própria linha */
+  margin-bottom: 2px; /* Pequeno espaçamento abaixo do label */
+}
+
+/* Estilo para a data e valor no tooltip */
+.chartjs-tooltip div:nth-child(1) div {
+  font-size: 0.85rem;
+  color: #f0f0f0;
+}
