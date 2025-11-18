@@ -38,7 +38,8 @@ const generateColor = (index) => {
     return { background: `hsla(${hue}, 70%, 60%, 0.7)`, border: `hsla(${hue}, 70%, 60%, 1)` };
 };
 
-// --- Função para encontrar a thumbnail (CORRETA) ---
+
+// --- Função para encontrar thumbnail ---
 function findClosestStacThumbnail(wtssDateStr, stacResults) {
     if (!stacResults || stacResults.length === 0 || !wtssDateStr) return null;
     try {
@@ -68,7 +69,9 @@ function findClosestStacThumbnail(wtssDateStr, stacResults) {
     }
 }
 
-// --- Função de processamento (CORRIGIDA) ---
+
+
+// --- Processamento de séries temporais ---
 const processTimeseries = (tsObject, stacResults) => { 
     const wtssCollectionId = tsObject?.coverage;
     const wtssResult = tsObject?.data?.result;
@@ -81,14 +84,13 @@ const processTimeseries = (tsObject, stacResults) => {
         const datasets = attributesArray.map((attrItem, index) => {
             if (!attrItem || typeof attrItem.attribute !== 'string' || !Array.isArray(attrItem.values)) return null;
             
-            const attrName = attrItem.attribute; // "NDVI" ou "EVI"
+            const attrName = attrItem.attribute; 
             const valuesArray = attrItem.values;
             const colorInfo = generateColor(index);
             const needsScaling = ['NDVI', 'EVI'].includes(attrName);
 
             const values = valuesArray.map((v, i) => {
                 const originalDate = wtssResult.timeline[i];
-                // Correção do "mergulho"
                 const cleanValue = (v === null || v === undefined || v <= -3000) ? null : (needsScaling ? v / 10000 : v);
                 
                 return {
@@ -99,7 +101,7 @@ const processTimeseries = (tsObject, stacResults) => {
             });
 
             return {
-                label: attrName, // Label correta
+                label: attrName,
                 data: values, 
                 borderColor: colorInfo.border,
                 backgroundColor: colorInfo.background,
@@ -119,10 +121,9 @@ const processTimeseries = (tsObject, stacResults) => {
 };
 
 
-// --- Lógica de Opções do Gráfico (CORRIGIDA) ---
+// --- Configurações do gráfico ---
 const getChartOptions = (collectionId) => {
-    
-    // Função helper para criar/encontrar o div do tooltip
+
     const getOrCreateTooltip = (chart) => {
         let tooltipEl = chart.canvas.parentNode.querySelector('div.chartjs-tooltip');
         if (!tooltipEl) {
@@ -154,7 +155,6 @@ const getChartOptions = (collectionId) => {
             return;
         }
 
-        // Como o modo é 'nearest', dataPoints[0] AGORA é o ponto correto
         const dataPoint = tooltip.dataPoints[0]?.raw;
         if (!dataPoint) return;
 
@@ -188,63 +188,28 @@ const getChartOptions = (collectionId) => {
     return {
         responsive: true,
         maintainAspectRatio: false,
-        // --- ALTERAÇÃO CRÍTICA AQUI ---
         interaction: {
-            mode: 'nearest', // Antes: 'index'
+            mode: 'nearest',
             intersect: false,
         },
-        // ------------------------------
         plugins: {
-            legend: { 
-                position: 'top', 
-                labels: { 
-                    color: '#000000',
-                    boxWidth: 20, 
-                    padding: 10
-                } 
-            },
+            legend: { position: 'top' },
             title: {
                 display: true,
-                text: `Série Temporal: ${collectionId}`, 
-                color: '#000000',
-                font: { size: 16 }
+                text: `Série Temporal: ${collectionId}`,
             },
             tooltip: {
                 enabled: false, 
                 position: 'nearest',
                 external: externalTooltipHandler
             }
-        },
-        scales: {
-            y: { 
-                ticks: { color: '#000000' }, 
-                grid: { color: 'rgba(0, 0, 0, 0.1)' },
-                title: {
-                    display: true,
-                    text: 'Valor do Índice', // Rótulo do Eixo Y
-                    color: '#000000'
-                }
-            },
-            x: { 
-                ticks: { 
-                    color: '#000000',
-                    autoSkip: true,       
-                    maxTicksLimit: 12     
-                }, 
-                grid: { color: 'rgba(0, 0, 0, 0.1)' },
-                title: {
-                    display: true,
-                    text: 'Data', // Rótulo do Eixo X
-                    color: '#000000'
-                }
-            }
         }
     };
 };
-// --- (FIM DA FUNÇÃO DE OPÇÕES) ---
 
 
-// --- Componente DashboardPage ---
+
+// --- Componente Principal ---
 const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = [] }) => { 
     
     const [selectedChartData, setSelectedChartData] = useState(null);
@@ -260,165 +225,187 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
         })).filter(c => c.chartData !== null); 
     }, [timeseriesData, searchResults]); 
 
-    const closeModal = () => {
-        setSelectedChartData(null);
-    };
+    const closeModal = () => setSelectedChartData(null);
 
     const handleSelectionChange = (chartId) => {
-        setSelectedCharts(prevSelected => {
-            const newSelected = new Set(prevSelected);
-            if (newSelected.has(chartId)) {
-                newSelected.delete(chartId);
-            } else {
-                newSelected.add(chartId);
-            }
-            return newSelected;
+        setSelectedCharts(prev => {
+            const newSet = new Set(prev);
+            newSet.has(chartId) ? newSet.delete(chartId) : newSet.add(chartId);
+            return newSet;
         });
     };
 
-    // --- Função de Exportar PDF (sem alterações) ---
+
+    // --- Exportar PDF ---
     const handleExportToPDF = async () => {
         if (selectedCharts.size === 0) {
             alert("Por favor, selecione pelo menos um gráfico para exportar.");
             return;
         }
+
         setIsExporting(true);
         const pdf = new jsPDF('p', 'mm', 'a4');
         const margin = 15;
         const pdfWidth = pdf.internal.pageSize.getWidth() - (margin * 2);
         const pdfPageHeight = pdf.internal.pageSize.getHeight();
         let currentY = margin;
+
         pdf.setFontSize(18);
         pdf.setFont('helvetica', 'bold');
         pdf.text('Relatório de Séries Temporais', margin, currentY);
-        currentY += 10; 
-        if (selectedCoords && selectedCoords.lat != null && selectedCoords.lng != null) {
+
+        currentY += 10;
+
+        if (selectedCoords) {
             pdf.setFontSize(12);
             pdf.setFont('helvetica', 'normal');
-            pdf.text('Coordenadas do Ponto de Análise:', margin, currentY);
-            currentY += 7; 
-            pdf.setFont('helvetica', 'italic');
-            pdf.text(`Latitude: ${selectedCoords.lat.toFixed(6)}`, margin + 5, currentY);
-            currentY += 6; 
-            pdf.text(`Longitude: ${selectedCoords.lng.toFixed(6)}`, margin + 5, currentY);
+            pdf.text('Coordenadas do Ponto:', margin, currentY);
+            currentY += 6;
+
+            pdf.text(`Lat: ${selectedCoords.lat.toFixed(6)}`, margin + 5, currentY);
+            currentY += 6;
+            pdf.text(`Lng: ${selectedCoords.lng.toFixed(6)}`, margin + 5, currentY);
+
+            currentY += 10;
         }
-        currentY += 12; 
-        const chartsToExport = Array.from(selectedCharts);
+
         try {
-            for (let i = 0; i < chartsToExport.length; i++) {
-                const chartId = chartsToExport[i];
-                const chartNode = chartRefs.current[chartId]; 
-                if (chartNode) {
-                    const canvas = await html2canvas(chartNode, {
-                        scale: 2, 
-                        useCORS: true,
-                        backgroundColor: '#ffffff',
-                    });
-                    const imgData = canvas.toDataURL('image/png');
-                    const ratio = canvas.height / canvas.width;
-                    const pdfHeight = pdfWidth * ratio; 
-                    if (currentY + pdfHeight + margin > pdfPageHeight) {
-                        pdf.addPage(); 
-                        currentY = margin; 
-                    }
-                    pdf.addImage(imgData, 'PNG', margin, currentY, pdfWidth, pdfHeight);
-                    currentY += pdfHeight + 10; 
+            for (const chartId of selectedCharts) {
+                const chartNode = chartRefs.current[chartId];
+                if (!chartNode) continue;
+
+                const canvas = await html2canvas(chartNode, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: "#ffffff",
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const ratio = canvas.height / canvas.width;
+                const pdfHeight = pdfWidth * ratio;
+
+                if (currentY + pdfHeight + margin > pdfPageHeight) {
+                    pdf.addPage();
+                    currentY = margin;
                 }
+
+                pdf.addImage(imgData, 'PNG', margin, currentY, pdfWidth, pdfHeight);
+                currentY += pdfHeight + 10;
             }
-            pdf.save('relatorio-series-temporais.pdf');
+
+            pdf.save("relatorio-series-temporais.pdf");
         } catch (error) {
-            console.error("Erro ao gerar o PDF:", error);
-            alert("Ocorreu um erro ao gerar o PDF. Verifique o console.");
+            console.error(error);
+            alert("Erro ao gerar PDF. Veja o console.");
         } finally {
             setIsExporting(false);
         }
     };
 
 
+
     return (
         <div className="page-container">
-            {/* O Tooltip div será criado dinamicamente pela função getChartOptions */}
 
-            {/* --- Cabeçalho Estruturado --- */}
+            {/* --- Cabeçalho --- */}
             <div className="dashboard-header">
                 <div className="title-block">
                     <h1>Análise de Séries Temporais (WTSS)</h1>
                     <p>
                         Selecione e exporte os gráficos acumulados de suas buscas.
-                        Passe o mouse sobre os pontos do gráfico para ver a thumbnail da imagem STAC mais próxima.
+                        Passe o mouse nos pontos para ver thumbnails STAC.
                     </p>
+
+                    {/* 🔥 LEGENDA NDVI / EVI — AQUI */}
+                    <div className="index-legend">
+                        <p>
+                            <span className="legend-icon ndvi-icon"></span>
+                            <strong>NDVI:</strong> índice clássico que mede o vigor da vegetação (varia entre -1 e 1).
+                        </p>
+
+                        <p>
+                            <span className="legend-icon evi-icon"></span>
+                            <strong>EVI:</strong> índice aprimorado que reduz saturação e efeitos atmosféricos.
+                        </p>
+                    </div>
+
                 </div>
+
                 <div className="export-controls">
                     <button 
-                        onClick={handleExportToPDF} 
+                        onClick={handleExportToPDF}
                         disabled={isExporting || selectedCharts.size === 0}
                         className="export-pdf-button"
                     >
-                        {isExporting 
-                            ? 'Exportando...' 
-                            : `Exportar ${selectedCharts.size} Gráfico(s) para PDF`
-                        }
+                        {isExporting ? "Exportando..." : `Exportar ${selectedCharts.size} Gráfico(s)`}
                     </button>
                 </div>
             </div>
 
-            {/* --- Renderização Condicional --- */}
+
+
+            {/* --- Sem resultados --- */}
             {chartsToRender.length === 0 && (
-                <div className="no-results-box" style={{ gridColumn: '1 / -1' }}>
-                    <h3>Nenhuma Série Temporal para exibir.</h3>
+                <div className="no-results-box">
+                    <h3>Nenhuma Série Temporal encontrada.</h3>
                     <p>
-                        Vá à <Link to="/">página do Mapa</Link>, faça uma busca STAC
-                        (os dados WTSS serão carregados automaticamente) ou clique em "Analisar Série"
-                        em um item WTSS.
+                        Vá ao <Link to="/">Mapa</Link> e realize uma busca STAC+WTSS.
                     </p>
                 </div>
             )}
 
-            {/* --- GRÁFICOS PEQUENOS LADO A LADO --- */}
-            <div className="charts-grid"> 
+
+
+            {/* --- Grid de gráficos --- */}
+            <div className="charts-grid">
                 {chartsToRender.map(({ id, chartData }) => {
-                    const isSelected = selectedCharts.has(id);
+                    const selected = selectedCharts.has(id);
+
                     return (
                         <div key={id} className="chart-grid-item-wrapper">
                             
                             <div
-                                className="chart-container" 
+                                className="chart-container"
                                 onClick={() => setSelectedChartData({ id, chartData })}
                                 style={{ cursor: 'pointer' }}
                             >
                                 <div 
                                     className="chart-click-area"
-                                    style={{ height: '350px', position: 'relative' }} 
-                                    ref={(el) => (chartRefs.current[id] = el)} 
+                                    style={{ height: '350px' }}
+                                    ref={el => chartRefs.current[id] = el}
                                 >
                                     <Line 
-                                        data={chartData} 
-                                        options={getChartOptions(id)} 
+                                        data={chartData}
+                                        options={getChartOptions(id)}
                                     />
                                 </div>
                             </div>
-                            
+
                             <button
-                                className={`chart-select-button ${isSelected ? 'selected' : ''}`}
+                                className={`chart-select-button ${selected ? "selected" : ""}`}
                                 onClick={() => handleSelectionChange(id)}
                             >
-                                {isSelected ? 'Selecionado' : `Selecionar ${id}`}
+                                {selected ? "Selecionado" : `Selecionar ${id}`}
                             </button>
-
                         </div>
                     );
                 })}
             </div>
 
+
+
             {/* --- Modal --- */}
             {selectedChartData && (
                 <div className="dashboard-modal-overlay" onClick={closeModal}>
-                    <div className="dashboard-modal-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="dashboard-modal-close" onClick={closeModal}>&times;</button>
+                    <div className="dashboard-modal-content" onClick={e => e.stopPropagation()}>
+                        <button className="dashboard-modal-close" onClick={closeModal}>
+                            &times;
+                        </button>
+
                         <div className="dashboard-modal-chart-container">
                             <Line 
-                                data={selectedChartData.chartData} 
-                                options={getChartOptions(selectedChartData.id)} 
+                                data={selectedChartData.chartData}
+                                options={getChartOptions(selectedChartData.id)}
                             />
                         </div>
                     </div>
@@ -427,6 +414,6 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
 
         </div>
     );
-}; 
+};
 
 export default DashboardPage;

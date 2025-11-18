@@ -26,13 +26,13 @@ const WelcomeModal = ({ isOpen, onClose }) => {
         
         {/* Usando a sua lista personalizada (sem o <li> vazio) */}
         <ul className="tutorial-list">
-          <li>🗺️ 📍 <strong>Mapa Interativo:</strong> Use o mapa para explorar as localizações. Você pode dar zoom e arrastar, além de visualiza as áreas de interesse. Um marcador o guirará no mapa.</li>
-          <li>📊 <strong>Gráficos Dinâmicos:</strong> Os gráficos mostram dados em tempo real, referente as séries temporais selecionadas. Passe o mouse sobre eles para mais detalhes.</li>
-          <li>🔄 <strong>Janelas Redimensionáveis:</strong> Você pode arrastar e redimensionar qualquer janela de widget para organizar seu layout.</li>
-          <li>📄 <strong>Exportar:</strong> Use os botões de exportação (PDF/PNG) para salvar suas visualizações.</li>
-          <li>➡️⬆️ <strong>Estilo:</strong> Utilize o filtro no canto superior para escolher um estilo que melhor o agrade visualmente.</li>
-          <li>🔍 <strong>Filtros:</strong> Use os filtros para escolher o modo de busca, as coleções de satélites e as série temporal (Período de tempo que deseja, com inicio e fim) .</li>
-        </ul>
+          <li>🗺️ 📍 <strong>Mapa Interativo:</strong> Explore localizações com zoom e arraste. Um marcador guia o levará às áreas de interesse no mapa.</li>
+          <li>📊 <strong>Gráficos Dinâmicos:</strong> Visualize dados de séries temporais em tempo real. Passe o mouse sobre os gráficos para obter detalhes e valores específicos.</li>
+          <li>🔄 <strong>Janelas Redimensionáveis:</strong> Personalize seu layout arrastando e redimensionando qualquer janela de widget para a organização que desejar.</li>
+          <li>📄 <strong>Exportar Visualizações:</strong> Use os botões de exportação (PDF) para salvar e compartilhar suas análises e visualizações.</li>
+          <li>➡️⬆️ <strong>Estilo de Visualização:</strong> Utilize o filtro no canto superior direito na pagina do mapa para selecionar o estilo visual que mais lhe agrada.</li>
+          <li>🔍 <strong>Filtros Avançados:</strong> Defina o modo de busca, escolha as coleções de satélites e especifique a série temporal (período de tempo de início e fim) para sua análise.</li>
+        </ul>
         
         <button className="modal-finish-button" onClick={onClose}>
           Entendi, começar a usar!

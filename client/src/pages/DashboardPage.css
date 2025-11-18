@@ -9,7 +9,6 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 2rem;
-  /* Usa a borda suave da sua paleta */
   border-bottom: 2px solid var(--borda-suave); 
   padding-bottom: 1.5rem;
   gap: 1.5rem;
@@ -19,28 +18,72 @@
   flex: 1;
 }
 
-/* O h1 já é estilizado pelo .page-container > h1 no seu index.css */
-/* Não precisamos re-estilizar aqui se ele já usa --cor-primaria-dark */
-
 .dashboard-header .title-block p {
   font-size: 1.05rem;
-  color: var(--texto-cinza); /* Usa o cinza do seu index.css */
+  color: var(--texto-cinza);
   margin-top: 0;
   max-width: 600px;
 }
 
+/* ------------------------------------- */
+/* --- LEGENDA NDVI / EVI COM ÍCONES --- */
+/* ------------------------------------- */
+.index-legend {
+  background: var(--fundo-caixa, #f5f5f5);
+  border-left: 4px solid var(--cor-primaria);
+  padding: 12px 16px;
+  margin-top: 14px;
+  border-radius: var(--raio-borda);
+  box-shadow: var(--sombra-suave);
+  font-size: 0.95rem;
+  color: var(--texto-cinza);
+  line-height: 1.45;
+}
+
+.index-legend p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+/* Ícones padrão */
+.index-legend .legend-icon {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Ícone NDVI (vermelho) */
+.index-legend .ndvi-icon {
+  background-color: #d64545;
+}
+
+/* Ícone EVI (verde) */
+.index-legend .evi-icon {
+  background-color: #2e8b57;
+}
+
+.index-legend strong {
+  color: var(--cor-primaria-dark);
+  font-weight: 700;
+}
+
+/* ------------------------------------- */
+/* --- Botão de Exportar --- */
+/* ------------------------------------- */
 .export-controls {
   flex-shrink: 0;
   margin-top: 4px;
 }
 
-/* Botão de Exportar usa a cor de REALCE (Laranja) */
 .export-pdf-button {
   padding: 0.8rem 1.5rem;
   font-size: 1rem;
   font-weight: 700;
-  color: var(--branco); /* Texto branco */
-  background-color: var(--cor-realce); /* Laranja */
+  color: var(--branco);
+  background-color: var(--cor-realce);
   border: 2px solid var(--cor-realce);
   border-radius: var(--raio-borda);
   cursor: pointer;
@@ -50,7 +93,7 @@
 }
 
 .export-pdf-button:hover:not(:disabled) {
-  background-color: var(--cor-realce-hover); /* Laranja escuro */
+  background-color: var(--cor-realce-hover);
   border-color: var(--cor-realce-hover);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.15);
@@ -66,35 +109,26 @@
   text-shadow: none;
 }
 
-
 /* ------------------------------------- */
-/* --- Grid e Container do Gráfico --- */
+/* --- Grid de Gráficos --- */
 /* ------------------------------------- */
-
-/* O .charts-grid já é definido no seu index.css (Seção 6) */
-/* Não precisamos redefinir */
-
-/* Wrapper para o Card + Botão */
 .chart-grid-item-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 12px; /* Espaço entre o card e o botão */
+  gap: 12px;
 }
 
-/* O .chart-container já é definido no seu index.css (Seção 6) */
-/* Mas vamos adicionar um hover bonito que combina com a paleta */
 .chart-container:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 96, 100, 0.15); /* Sombra Ciano sutil */
+  box-shadow: 0 8px 24px rgba(0, 96, 100, 0.15);
   border-color: var(--cor-primaria);
 }
 
-/* A área clicável (fundo branco) já está correta */
 .chart-click-area {
   flex-grow: 1;
-  padding: 1rem; 
+  padding: 1rem;
   box-sizing: border-box;
-  background-color: var(--branco); /* Fundo branco para o gráfico */
+  background-color: var(--branco);
 }
 
 .chart-click-area > div {
@@ -103,9 +137,8 @@
   position: relative;
 }
 
-
 /* ------------------------------------- */
-/* --- Botão de Seleção --- */
+/* --- Botão de Seleção — WTSS --- */
 /* ------------------------------------- */
 .chart-select-button {
   display: block;
@@ -118,47 +151,35 @@
   border-radius: var(--raio-borda);
   cursor: pointer;
   transition: all 0.2s ease;
-  
-  /* Estilo Padrão: usa a cor PRIMÁRIA (Ciano) */
-  background-color: var(--fundo-sidebar); /* Fundo Ciano bem claro */
+
+  background-color: var(--fundo-sidebar);
   border: 2px solid var(--fundo-sidebar);
-  color: var(--cor-primaria-dark); /* Texto Ciano escuro */
+  color: var(--cor-primaria-dark);
 }
 
 .chart-select-button:hover {
-  background-color: var(--cor-primaria); /* Fica Ciano sólido no hover */
+  background-color: var(--cor-primaria);
   border-color: var(--cor-primaria);
   color: var(--branco);
 }
 
-/* Estilo Selecionado: usa a cor de REALCE (Laranja) */
 .chart-select-button.selected {
-  background-color: var(--cor-realce); /* Fundo Laranja */
-  color: var(--branco); /* Texto Branco */
+  background-color: var(--cor-realce);
+  color: var(--branco);
   border-color: var(--cor-realce);
   box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
 }
 
 /* ------------------------------------- */
-/* --- Seção "Sem Resultados" --- */
+/* --- Modal de Visualização --- */
 /* ------------------------------------- */
-/* O .no-results-box já é definido no seu index.css (Seção 6) */
-/* Os estilos dele (fundo azul claro, borda tracejada) já combinam */
-
-
-/* ------------------------------------- */
-/* --- Estilos do Modal --- */
-/* ------------------------------------- */
-/* (O seu index.css já define .popup-window para o RND no Mapa) */
-/* (Vamos criar estilos de modal separados para o Dashboard) */
-
 .dashboard-modal-overlay {
   position: fixed; 
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6); /* Overlay escuro */
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -174,7 +195,7 @@
 }
 
 .dashboard-modal-content {
-  background-color: var(--branco); /* Fundo branco */
+  background-color: var(--branco);
   border-radius: var(--raio-borda);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   padding: 2rem;
@@ -201,12 +222,11 @@
   font-size: 2.5rem;
   color: #888;
   cursor: pointer;
-  line-height: 1;
-  padding: 0;
   transition: color 0.2s;
 }
+
 .dashboard-modal-close:hover {
-  color: var(--cor-erro, #E53935); /* (Opcional: usar cor de erro no hover) */
+  color: var(--cor-erro, #E53935);
 }
 
 .dashboard-modal-chart-container {
@@ -216,7 +236,9 @@
   height: 100%;
 }
 
+/* ------------------------------------- */
 /* --- Responsividade --- */
+/* ------------------------------------- */
 @media (max-width: 768px) {
   .page-container {
     padding: 16px;

@@ -1,0 +1,27 @@
+/* Conteúdo de ResultsPanel.css */
+
+.collection-title-short {
+    /* Faz com que o elemento se comporte como um bloco, permitindo a limitação de largura */
+    display: block; 
+    
+    /* Garante que o texto fique em uma única linha */
+    white-space: nowrap;
+    
+    /* Esconde o conteúdo que excede o limite */
+    overflow: hidden;
+    
+    /* Adiciona reticências (...) */
+    text-overflow: ellipsis;
+    
+    /* Limita a largura do título para caber no layout */
+    max-width: 70%; 
+    
+    /* Garante que o STRONG dentro do FLEXBOX .result-group-title use o espaço */
+    flex-grow: 1; 
+}
+/* Recomenda-se também garantir que o contêiner dos elementos funcione com FLEX */
+.result-group-title {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
