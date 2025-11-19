@@ -1,4 +1,3 @@
-// src/components/TimeseriesChart.jsx
 import React, { useMemo } from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { Line } from 'react-chartjs-2';
@@ -7,16 +6,12 @@ ChartJS.register(
   CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend
 );
 
-// Paleta de cores para os gráficos
 const chartColors = [
   'rgb(75, 192, 192)', 'rgb(255, 99, 132)', 'rgb(54, 162, 235)',
   'rgb(255, 206, 86)', 'rgb(153, 102, 255)', 'rgb(255, 159, 64)'
 ];
 
-// --- (FUNÇÃO ADICIONADA) ---
-/**
- * Encontra a thumbnail STAC mais próxima de uma data WTSS.
- */
+// --- Função Auxiliar para Thumbnail ---
 function findClosestStacThumbnail(wtssDateStr, stacResults) {
     if (!stacResults || stacResults.length === 0 || !wtssDateStr) return null;
 
@@ -28,7 +23,6 @@ function findClosestStacThumbnail(wtssDateStr, stacResults) {
         let minDiff = Infinity;
 
         for (const item of stacResults) {
-            // Verifica se o item STAC tem thumbnail e data
             if (item.thumbnail && item.date) {
                 const itemTime = new Date(item.date).getTime();
                 if (isNaN(itemTime)) continue;
@@ -53,14 +47,9 @@ function findClosestStacThumbnail(wtssDateStr, stacResults) {
     }
 }
 
-
-// --- (FUNÇÃO ADICIONADA) ---
-/**
- * Lógica reutilizável para o tooltip externo e opções do gráfico
- */
+// --- Opções do Gráfico com Posicionamento Inteligente ---
 const getChartOptions = (collectionId) => {
     
-    // Função helper para criar/encontrar o div do tooltip
     const getOrCreateTooltip = (chart) => {
         let tooltipEl = chart.canvas.parentNode.querySelector('div.chartjs-tooltip');
         if (!tooltipEl) {
@@ -73,7 +62,7 @@ const getChartOptions = (collectionId) => {
             tooltipEl.style.borderRadius = '5px';
             tooltipEl.style.padding = '10px';
             tooltipEl.style.pointerEvents = 'none';
-            tooltipEl.style.transition = 'opacity 0.2s';
+            tooltipEl.style.transition = 'opacity 0.2s, transform 0.2s'; // Adiciona transição suave
             tooltipEl.style.zIndex = '9999';
             tooltipEl.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
             tooltipEl.style.fontSize = '0.9rem';
@@ -87,12 +76,12 @@ const getChartOptions = (collectionId) => {
         const { chart, tooltip } = context;
         const tooltipEl = getOrCreateTooltip(chart);
 
+        // Esconde se não houver tooltip ativo
         if (tooltip.opacity === 0) {
             tooltipEl.style.opacity = '0';
             return;
         }
 
-        // Como o modo é 'nearest', dataPoints[0] AGORA é o ponto correto
         const dataPoint = tooltip.dataPoints[0]?.raw;
         if (!dataPoint) return;
 
@@ -101,6 +90,7 @@ const getChartOptions = (collectionId) => {
         const label = tooltip.dataPoints[0].dataset.label || ''; 
         const color = tooltip.dataPoints[0].dataset.borderColor;
 
+        // Constrói o HTML
         let innerHtml = `
             <div style="margin-bottom: 5px; text-align: left;">
                 <strong style="color: ${color};">${label}</strong>
@@ -109,29 +99,41 @@ const getChartOptions = (collectionId) => {
         `;
         
         if (dataPoint.thumbnail) {
-            innerHtml += `<img src="${dataPoint.thumbnail}" alt="Thumbnail" style="width: 150px; height: auto; border-radius: 3px; display: block;" />`;
+            innerHtml += `<img src="${dataPoint.thumbnail}" alt="Thumbnail" style="width: 150px; height: auto; border-radius: 3px; display: block; margin-top: 5px;" />`;
         } else {
             innerHtml += `<span style="font-size: 0.8rem; color: #ccc;">(Sem thumbnail próxima)</span>`;
         }
 
         tooltipEl.innerHTML = innerHtml;
         
+        // --- LÓGICA DE POSICIONAMENTO INTELIGENTE ---
         const { offsetLeft, offsetTop } = chart.canvas;
-        tooltipEl.style.opacity = '1';
+        const tooltipHeight = tooltipEl.offsetHeight; // Altura atual do tooltip (com imagem)
+        const caretY = tooltip.caretY; // Posição Y do mouse/ponto no gráfico
+
+        // Define a posição base
         tooltipEl.style.left = offsetLeft + tooltip.caretX + 'px';
-        tooltipEl.style.top = offsetTop + tooltip.caretY + 'px';
-        tooltipEl.style.transform = 'translate(-50%, -110%)'; 
+        tooltipEl.style.top = offsetTop + caretY + 'px';
+
+        // Verifica se há espaço acima
+        if (caretY < tooltipHeight + 20) {
+            // renderiza PARA BAIXO (com uma margem de 20px do cursor)
+            tooltipEl.style.transform = 'translate(-50%, 20px)';
+        } else {
+            // renderiza PARA CIMA (padrão)
+            tooltipEl.style.transform = 'translate(-50%, -110%)';
+        }
+
+        tooltipEl.style.opacity = '1';
     };
 
     return {
         responsive: true,
         maintainAspectRatio: false,
-        // --- ALTERAÇÃO CRÍTICA AQUI ---
         interaction: {
-            mode: 'nearest', // Antes: 'index'
+            mode: 'nearest',
             intersect: false,
         },
-        // ------------------------------
         plugins: {
             legend: { 
                 position: 'top', 
@@ -143,61 +145,36 @@ const getChartOptions = (collectionId) => {
                 color: '#000000'
             },
             tooltip: {
-                enabled: false, 
+                enabled: false, // Desabilita o tooltip padrão
                 position: 'nearest',
-                external: externalTooltipHandler
+                external: externalTooltipHandler // Usa o nosso customizado
             }
         },
-        // --- CORREÇÃO: Rótulos dos eixos e limpeza do eixo X ---
         scales: {
             y: { 
                 ticks: { color: '#000000' }, 
                 grid: { color: 'rgba(0, 0, 0, 0.1)' },
-                title: {
-                    display: true,
-                    text: 'Valor do Índice', // Rótulo do Eixo Y
-                    color: '#000000'
-                }
+                title: { display: true, text: 'Valor do Índice', color: '#000000' }
             },
             x: { 
-                ticks: { 
-                    color: '#000000',
-                    autoSkip: true,       
-                    maxTicksLimit: 12     
-                }, 
+                ticks: { color: '#000000', autoSkip: true, maxTicksLimit: 12 }, 
                 grid: { color: 'rgba(0, 0, 0, 0.1)' },
-                title: {
-                    display: true,
-                    text: 'Data', // Rótulo do Eixo X
-                    color: '#000000'
-                }
+                title: { display: true, text: 'Data', color: '#000000' }
             }
         }
     };
 };
-// --- (FIM DA FUNÇÃO DE OPÇÕES) ---
 
-
-// --- (COMPONENTE MODIFICADO) ---
-// Agora aceita 'stacResults' para encontrar as thumbnails
 const TimeseriesChart = ({ timeseriesData, stacResults = [] }) => {
-  
-  // O 'useMemo' recalcula os dados do gráfico apenas se os dados da API mudarem
   const chartData = useMemo(() => {
-    if (!timeseriesData || !timeseriesData.result) {
-      return null;
-    }
+    if (!timeseriesData || !timeseriesData.result) return null;
 
     const { timeline, attributes } = timeseriesData.result;
 
     const datasets = attributes.map((attr, index) => {
-      // --- PONTO DA CORREÇÃO ---
       const attrName = attr.attribute;
-      // -------------------------
-
       const needsScaling = ['NDVI', 'EVI'].includes(attrName);
       
-      // --- CORREÇÃO DO "MERGULHO" + THUMBNAIL ---
       const values = attr.values.map((v, i) => {
         const originalDate = timeline[i];
         const cleanValue = (v === null || v === undefined || v <= -3000) ? null : (needsScaling ? v / 10000 : v);
@@ -210,7 +187,7 @@ const TimeseriesChart = ({ timeseriesData, stacResults = [] }) => {
       });
       
       return {
-        label: attrName, // <-- Label correta
+        label: attrName,
         data: values,
         borderColor: chartColors[index % chartColors.length],
         backgroundColor: chartColors[index % chartColors.length].replace(')', ', 0.5)'),
@@ -223,28 +200,20 @@ const TimeseriesChart = ({ timeseriesData, stacResults = [] }) => {
       labels: timeline.map(date => new Date(date).toLocaleDateString()),
       datasets: datasets,
     };
-  }, [timeseriesData, stacResults]); // Recalcula se os dados WTSS ou STAC mudarem
+  }, [timeseriesData, stacResults]);
 
-  // Obtém as opções do gráfico usando a nova função
   const chartOptions = useMemo(() => {
-    // Título usa as coordenadas no popup, pois 'collectionId' pode não estar disponível
     const title = `Série Temporal para o Ponto (${timeseriesData.result.coordinates.latitude.toFixed(4)}, ${timeseriesData.result.coordinates.longitude.toFixed(4)})`;
     const collectionId = timeseriesData?.result?.coverage || "Série Temporal";
     
-    // Pega as opções base
     const options = getChartOptions(collectionId);
-    
-    // Sobrescreve o título para o popup
     options.plugins.title.text = title; 
     
     return options;
   }, [timeseriesData]);
 
-  if (!chartData) {
-    return <p>Carregando dados da série temporal...</p>;
-  }
+  if (!chartData) return <p>Carregando dados da série temporal...</p>;
 
-  // O container precisa de 'position: relative' para o tooltip funcionar
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <Line options={chartOptions} data={chartData} />

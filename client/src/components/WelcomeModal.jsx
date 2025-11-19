@@ -1,42 +1,263 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './WelcomeModal.css';
 
-// Chave para o localStorage (agora só usada no App.jsx)
-// const LOCAL_STORAGE_KEY = 'hasVisitedOdinTutorial'; 
-
-// Este modal agora é "controlado". Ele recebe 'isOpen' e 'onClose' do "pai" (App.jsx)
 const WelcomeModal = ({ isOpen, onClose }) => {
+  const [activeTab, setActiveTab] = useState('bem-vindo');
 
-  // Se o "pai" diz que não está aberto, não renderiza nada
-  if (!isOpen) {
-    return null;
-  }
+  if (!isOpen) return null;
 
-  // Renderiza o modal (o popup)
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'bem-vindo':
+        return (
+          <div className="tab-content fade-in">
+            <h2>Bem-vindo ao ODIN</h2>
+            <p className="intro-text">
+              O <strong>ODIN</strong> (Observatório de Dados e Imagens da Natureza) é a sua plataforma avançada para exploração e análise de dados de observação da terra.
+            </p>
+            
+            <div className="feature-cards">
+              <div className="card">
+                <div className="icon">🌍</div>
+                <h3>Exploração Visual</h3>
+                <p>Navegue por mapas interativos e visualize imagens de satélite de diversas fontes.</p>
+              </div>
+              <div className="card">
+                <div className="icon">📈</div>
+                <h3>Análise Temporal</h3>
+                <p>Gere gráficos de séries temporais (NDVI, EVI) para monitorar a vegetação ao longo dos anos.</p>
+              </div>
+              <div className="card">
+                <div className="icon">🛰️</div>
+                <h3>Multi-Satélite</h3>
+                <p>Acesso integrado a dados do Landsat, Sentinel, CBERS e Amazonia-1.</p>
+              </div>
+            </div>
+            
+            <div className="action-area">
+              <p>Selecione um tópico no menu ao lado para aprender mais.</p>
+              <button className="btn-primary" onClick={() => setActiveTab('funcionalidades')}>
+                Conhecer Funcionalidades
+              </button>
+            </div>
+          </div>
+        );
+
+      case 'funcionalidades':
+        return (
+          <div className="tab-content fade-in">
+            <h2>Funcionalidades Principais</h2>
+
+            <section className="concept-section">
+              <h3>⛶ Modo Tela Cheia (Fullscreen)</h3>
+              <p>
+                Para uma imersão total, clique no botão <span className="icon-inline">⛶</span> no cabeçalho. 
+              </p>
+              <ul className="concept-list">
+                <li><strong>O que acontece:</strong> As barras laterais e menus do navegador são ocultados, maximizando a área do mapa.</li>
+                <li><strong>Ideal para:</strong> Apresentações, visualização de grandes áreas ou quando você precisa de mais espaço para arrastar as janelas de gráficos.</li>
+                <li><strong>Como sair:</strong> Pressione <code>Esc</code> ou clique novamente no botão <span className="icon-inline">⤢</span>.</li>
+              </ul>
+            </section>
+
+            <hr className="divider"/>
+
+            <section className="concept-section">
+              <h3>🔍 Modos de Busca</h3>
+              <div className="comparison-box">
+                <div>
+                  <h4>Busca por Coleção (Padrão)</h4>
+                  <p>Ideal para pesquisas rápidas. Você seleciona <strong>um grupo lógico</strong> (ex: "Apenas Satélites Sentinel-2") e o sistema busca todos os dados relacionados.</p>
+                </div>
+                <div className="separator">vs</div>
+                <div>
+                  <h4>Busca Avançada</h4>
+                  <p>Para usuários experientes. Permite selecionar <strong>múltiplas coleções específicas</strong> individualmente (ex: misturar <em>CBERS-4</em> com <em>Landsat-8</em> na mesma busca) através de caixas de seleção.</p>
+                </div>
+              </div>
+            </section>
+
+            <hr className="divider"/>
+
+            <section className="concept-section">
+              <h3>📊 Dashboard & Relatórios</h3>
+              <p>
+                A página de Dashboard centraliza todas as séries temporais que você gerou durante sua sessão.
+              </p>
+              <ul className="concept-list">
+                <li><strong>Interatividade:</strong> Passe o mouse sobre os pontos dos gráficos para ver os valores exatos e as datas.</li>
+                <li><strong>Exportação PDF:</strong> Selecione os gráficos mais relevantes e gere um relatório PDF profissional pronto para impressão.</li>
+                <li><strong>Comparação:</strong> Visualize dados de diferentes locais ou satélites lado a lado.</li>
+              </ul>
+            </section>
+
+            <hr className="divider"/>
+
+            <section className="concept-section warning-box">
+              <h3>⚠️ Sobre as Thumbnails (Visualização)</h3>
+              <p>
+                Ao clicar em um resultado, uma imagem ("Overlay") é projetada sobre o mapa.
+              </p>
+              <p><strong>Importante:</strong> Estas imagens são <em>prévias rápidas (Thumbnails)</em> geradas pelos provedores.</p>
+              <ul>
+                <li>Elas <strong>não possuem precisão geográfica absoluta</strong> e podem apresentar leves deslocamentos em relação ao mapa base.</li>
+                <li>Elas têm <strong>resolução reduzida</strong> para carregamento rápido.</li>
+                <li>Para análises científicas rigorosas, utilize os botões de "Baixar JSON" ou acesse os dados brutos via link original.</li>
+              </ul>
+            </section>
+          </div>
+        );
+
+      case 'conceitos':
+        return (
+          <div className="tab-content fade-in">
+            <h2>Conceitos Fundamentais</h2>
+            
+            <section className="concept-section">
+              <h3>📡 O que é STAC?</h3>
+              <p className="subtitle">SpatioTemporal Asset Catalog</p>
+              <p>
+                O <strong>STAC</strong> é como um "índice de biblioteca" gigante para imagens de satélite. 
+                Em vez de baixar terabytes de dados para procurar uma imagem, o ODIN usa o STAC para perguntar: 
+                <em>"Quais imagens existem nesta localização (Latitude/Longitude) e nesta data?"</em>.
+              </p>
+              <ul className="concept-list">
+                <li>Padroniza a busca de imagens de diferentes fornecedores (INPE, USGS, ESA).</li>
+                <li>Permite encontrar rapidamente metadados (cobertura de nuvens, data, satélite).</li>
+              </ul>
+            </section>
+
+            <hr className="divider"/>
+
+            <section className="concept-section">
+              <h3>📉 O que é WTSS?</h3>
+              <p className="subtitle">Web Time Series Service</p>
+              <p>
+                O <strong>WTSS</strong> extrai a "história" de um único ponto no mapa.
+                Imagine furar uma pilha de 1000 imagens de satélite no mesmo local e extrair o valor do pixel em cada data.
+              </p>
+              <p>Isso permite criar gráficos de índices como <strong>NDVI</strong> (Vegetação) e <strong>EVI</strong>.</p>
+            </section>
+          </div>
+        );
+
+      case 'tutoriais':
+        return (
+          <div className="tab-content fade-in">
+            <h2>Fluxo de Trabalho Básico</h2>
+            
+            <div className="tutorial-step">
+              <div className="step-number">1</div>
+              <div className="step-info">
+                <h3>Busca e Filtros</h3>
+                <p>
+                  Vá ao <strong>Mapa</strong>. Defina o intervalo de datas (Início/Fim) e escolha o satélite. 
+                  Clique no mapa para marcar o ponto (Pin) ou digite as coordenadas no cabeçalho. Clique em "Buscar Dados".
+                </p>
+              </div>
+            </div>
+
+            <div className="tutorial-step">
+              <div className="step-number">2</div>
+              <div className="step-info">
+                <h3>Resultados e Overlay</h3>
+                <p>
+                  Os resultados aparecem na lista lateral. Clique em um item para ver a <strong>Thumbnail</strong> projetada no mapa e checar a cobertura de nuvens.
+                </p>
+              </div>
+            </div>
+
+            <div className="tutorial-step">
+              <div className="step-number">3</div>
+              <div className="step-info">
+                <h3>Análise WTSS</h3>
+                <p>
+                  Se o item for compatível, um botão <strong>WTSS</strong> aparecerá. Clique nele para gerar o gráfico de série temporal em uma janela flutuante.
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'sobre':
+        return (
+          <div className="tab-content fade-in">
+            <h2>Sobre o Projeto</h2>
+            <p>
+              O <strong>ODIN</strong> foi desenvolvido para facilitar o acesso aos dados abertos do INPE e outras agências espaciais.
+            </p>
+            <ul className="tech-list">
+              <li><strong>Front-end:</strong> React, Vite, Leaflet, Chart.js</li>
+              <li><strong>Dados:</strong> API STAC (INPE), API WTSS (INPE)</li>
+            </ul>
+            <div className="credits">
+              <p>Desenvolvido por <strong>CodeGators</strong> &copy; {new Date().getFullYear()}</p>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
-    // O 'handleClose' foi substituído por 'onClose'
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close-button" onClick={onClose}>
-          &times;
-        </button>
+    <div className="help-modal-overlay" onClick={onClose}>
+      <div className="help-modal-container" onClick={(e) => e.stopPropagation()}>
         
-        <h2>Bem-vindo ao ODIN!</h2>
-        <p>Este é um rápido tutorial sobre como usar as funcionalidades:</p>
-        
-        {/* Usando a sua lista personalizada (sem o <li> vazio) */}
-        <ul className="tutorial-list">
-          <li>🗺️ 📍 <strong>Mapa Interativo:</strong> Explore localizações com zoom e arraste. Um marcador guia o levará às áreas de interesse no mapa.</li>
-          <li>📊 <strong>Gráficos Dinâmicos:</strong> Visualize dados de séries temporais em tempo real. Passe o mouse sobre os gráficos para obter detalhes e valores específicos.</li>
-          <li>🔄 <strong>Janelas Redimensionáveis:</strong> Personalize seu layout arrastando e redimensionando qualquer janela de widget para a organização que desejar.</li>
-          <li>📄 <strong>Exportar Visualizações:</strong> Use os botões de exportação (PDF) para salvar e compartilhar suas análises e visualizações.</li>
-          <li>➡️⬆️ <strong>Estilo de Visualização:</strong> Utilize o filtro no canto superior direito na pagina do mapa para selecionar o estilo visual que mais lhe agrada.</li>
-          <li>🔍 <strong>Filtros Avançados:</strong> Defina o modo de busca, escolha as coleções de satélites e especifique a série temporal (período de tempo de início e fim) para sua análise.</li>
-        </ul>
-        
-        <button className="modal-finish-button" onClick={onClose}>
-          Entendi, começar a usar!
-        </button>
+        {/* Sidebar de Navegação */}
+        <aside className="help-sidebar">
+          <div className="sidebar-header">
+            <span className="logo-icon">👁️</span>
+            <h3>Central de Ajuda</h3>
+          </div>
+          
+          <nav className="help-nav">
+            <button 
+              className={activeTab === 'bem-vindo' ? 'active' : ''} 
+              onClick={() => setActiveTab('bem-vindo')}
+            >
+              🏠 Início
+            </button>
+            <button 
+              className={activeTab === 'funcionalidades' ? 'active' : ''} 
+              onClick={() => setActiveTab('funcionalidades')}
+            >
+              🛠️ Funcionalidades
+            </button>
+            <button 
+              className={activeTab === 'conceitos' ? 'active' : ''} 
+              onClick={() => setActiveTab('conceitos')}
+            >
+              📚 Conceitos (STAC/WTSS)
+            </button>
+            <button 
+              className={activeTab === 'tutoriais' ? 'active' : ''} 
+              onClick={() => setActiveTab('tutoriais')}
+            >
+              🎓 Tutoriais
+            </button>
+            <button 
+              className={activeTab === 'sobre' ? 'active' : ''} 
+              onClick={() => setActiveTab('sobre')}
+            >
+              ℹ️ Sobre
+            </button>
+          </nav>
+
+          <div className="sidebar-footer">
+            <button className="close-btn-sidebar" onClick={onClose}>
+              Fechar Ajuda
+            </button>
+          </div>
+        </aside>
+
+        {/* Área de Conteúdo */}
+        <main className="help-content-area">
+          <button className="close-btn-absolute" onClick={onClose}>&times;</button>
+          {renderContent()}
+        </main>
+
       </div>
     </div>
   );

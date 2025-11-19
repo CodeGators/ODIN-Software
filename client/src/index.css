@@ -321,3 +321,46 @@ tbody tr:hover { background-color: var(--fundo-sidebar); }
   font-size: 0.85rem;
   color: #f0f0f0;
 }
+
+/* --- CORREÇÃO DO REDIMENSIONAMENTO DO GRÁFICO WTSS --- */
+
+/* Força a janela RND a usar Flexbox vertical */
+.popup-window.wtss-chart-popup {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/*  O cabeçalho tem tamanho fixo (não cresce, não encolhe) */
+.popup-window.wtss-chart-popup .popup-header {
+  flex: 0 0 auto; 
+  width: 100%;
+}
+
+/*  O conteúdo deve crescer para ocupar TODO o espaço restante */
+.popup-window.wtss-chart-popup .popup-content {
+  flex: 1 1 auto;          /* Cresce e encolhe */
+  display: flex;           /* Flexbox interno também */
+  flex-direction: column;
+  padding: 10px;           /* Padding opcional */
+  overflow: hidden;        /* Remove barras de rolagem indesejadas */
+  height: 100%;            /* Garante altura total */
+  background-color: var(--branco);
+}
+
+/*  O Container do gráfico*/
+/* Esta regra atinge a div raiz do componente TimeseriesChart */
+.popup-window.wtss-chart-popup .popup-content > div {
+  flex: 1 1 auto;         /* Ocupa todo o espaço vertical do pai */
+  position: relative;     /* Necessário para o Chart.js */
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0;          
+  box-sizing: border-box;
+}
+
+/* Garante que o Canvas do Chart.js obedeça */
+.popup-window.wtss-chart-popup .popup-content canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}

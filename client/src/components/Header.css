@@ -1,5 +1,3 @@
-/* 🌟 HEADER ULTRA PREMIUM - DESIGN ESPETACULAR 🌟 */
-
 /* ═══════════════════════════════════════════════════════════════════ */
 /* 1. VARIÁVEIS & CORES VIBRANTES */
 /* ═══════════════════════════════════════════════════════════════════ */
@@ -8,7 +6,7 @@
   --raio-borda-header: 16px;
   --font-principal: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   
-  /* 🎨 Paleta de Cores Neon */
+  /* Paleta de Cores Neon */
   --neon-cyan: #00fff2;
   --neon-blue: #00d4ff;
   --neon-purple: #a855f7;
@@ -37,7 +35,7 @@
     rgba(0, 212, 255, 0.35) 50%,
     rgba(168, 85, 247, 0.35) 100%);
   
-  /* ✨ Sombras Épicas */
+  /* Sombras*/
   --shadow-mega: 
     0 4px 6px rgba(0, 0, 0, 0.2),
     0 10px 20px rgba(0, 0, 0, 0.25),
@@ -157,7 +155,7 @@
 }
 
 
-/* ✨ Linha de luz no topo */
+/* Linha de luz no topo */
 .main-header.modern-header::after {
   content: '';
   position: absolute;
@@ -214,7 +212,7 @@
           drop-shadow(0 0 50px var(--neon-blue));
 }
 
-/* 🌟 TÍTULO COM GRADIENTE ANIMADO */
+/* TÍTULO COM GRADIENTE ANIMADO */
 .site-title {
   font-size: 2.6rem;
   font-weight: 900;
@@ -263,7 +261,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════ */
-/* 5. INPUTS DE LOCALIZAÇÃO - FUTURÍSTICO */
+/* INPUTS DE LOCALIZAÇÃO
 /* ═══════════════════════════════════════════════════════════════════ */
 .location-inputs-header {
   display: flex;
@@ -297,10 +295,6 @@
   z-index: -1;
 }
 
-.location-field-header:focus-within::before {
-  opacity: 1;
-  animation: rotateBorder 3s linear infinite;
-}
 
 .location-field-header label {
   color: rgba(255, 255, 255, 0.9);
@@ -380,7 +374,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════ */
-/* 6. NAVEGAÇÃO - DESIGN ESPACIAL */
+/* NAVEGAÇÃO */
 /* ═══════════════════════════════════════════════════════════════════ */
 .main-nav {
   display: flex;
@@ -474,7 +468,7 @@
     0 0 80px rgba(168, 85, 247, 0.3);
 }
 
-/* 🎯 BOTÃO DE TOGGLE ESPECIAL */
+/* BOTÃO DE TOGGLE ESPECIAL */
 .interface-toggle-button {
   padding: 12px 14px;
   margin: 0 10px;
@@ -490,7 +484,7 @@
     0 0 40px rgba(0, 255, 242, 0.5);
 }
 
-/* 🆘 BOTÃO DE AJUDA */
+/* BOTÃO DE AJUDA */
 .help-button {
   margin-left: 10px;
   background: linear-gradient(135deg,
@@ -529,7 +523,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════ */
-/* 7. RESPONSIVIDADE */
+/* RESPONSIVIDADE */
 /* ═══════════════════════════════════════════════════════════════════ */
 @media (max-width: 1200px) {
   .location-field-header input {
