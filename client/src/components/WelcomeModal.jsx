@@ -191,7 +191,27 @@ const WelcomeModal = ({ isOpen, onClose }) => {
               <li><strong>Dados:</strong> API STAC (INPE), API WTSS (INPE)</li>
             </ul>
             <div className="credits">
-              <p>Desenvolvido por <strong>CodeGators</strong> &copy; {new Date().getFullYear()}</p>
+              <p style={{ display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+                <a 
+                  href="https://github.com/CodeGators" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center' }}
+                >
+                  <img 
+                    src="/images/codegators.png" // <-- Caminho corrigido para public/images
+                    alt="Logo CodeGators - Crocodilo"
+                    style={{ 
+                      width: '150px', 
+                      height: 'auto', 
+                      marginRight: '8px',
+                      transform: 'scaleX(-1)'
+                    }}
+                  />
+                  Desenvolvido por CodeGators
+                </a> 
+                &copy; {new Date().getFullYear()}
+              </p>
             </div>
           </div>
         );

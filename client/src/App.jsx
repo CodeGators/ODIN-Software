@@ -1,13 +1,13 @@
 // Arquivo: App.jsx
-import React, { useState, useRef, useEffect } from 'react'; // Importe o useEffect
+import React, { useState, useRef, useEffect } from 'react'; 
 import { Routes, Route, Outlet } from 'react-router-dom';
 import MapPage from './pages/MapPage';
-import DataPage from './pages/DataPage';
+// REMOVIDO: import DataPage from './pages/DataPage'; 
 import DashboardPage from './pages/DashboardPage';
 import Header from './components/Header';
-import WelcomeModal from './components/WelcomeModal'; // O import que você já tinha
+import WelcomeModal from './components/WelcomeModal'; 
 
-import 'react-resizable/css/styles.css'; // Mantenha se SelectedItemPopup usar RND indiretamente
+import 'react-resizable/css/styles.css'; 
 
 // Chave para o localStorage
 const LOCAL_STORAGE_KEY = 'hasVisitedOdinTutorial';
@@ -36,7 +36,7 @@ function App() {
     if (!hasVisited) {
       setIsHelpModalOpen(true);
     }
-  }, []); // O array vazio [] garante que isso rode apenas uma vez
+  }, []); 
 
   // 2. Função para o botão de "Ajuda" (no Header)
   const handleHelpClick = () => {
@@ -73,7 +73,7 @@ function App() {
         handleCoordinateChange={handleCoordinateChange}
         interfaceMode={interfaceMode}
         toggleInterfaceMode={toggleInterfaceMode}
-        onHelpClick={handleHelpClick} // <-- 4. Passa a função para o Header
+        onHelpClick={handleHelpClick} 
       />
         <Routes>
           <Route
@@ -93,12 +93,12 @@ function App() {
             />}
           />
           <Route element={<ContentWrapper />}>
-            <Route path="/data" element={<DataPage searchResults={searchResults} />} />
+            {/* Rota /data REMOVIDA AQUI */}
             <Route path="/dashboard" element={
                 <DashboardPage
                     timeseriesData={timeseriesData} 
                     selectedCoords={selectedCoords}
-                    searchResults={searchResults} // <-- ALTERAÇÃO AQUI
+                    searchResults={searchResults} 
                 />}
             />
           </Route>

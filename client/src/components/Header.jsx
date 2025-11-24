@@ -202,18 +202,8 @@ const Header = ({
 
       {/* 🎨 NAVEGAÇÃO ESPACIAL */}
       <nav className="main-nav" role="navigation" aria-label="Navegação principal">
-        {/* 🗺️ Link para o Mapa */}
-        <NavLink 
-          to="/" 
-          className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
-          title="Visualizar Mapa Interativo"
-          aria-label="Ir para Mapa"
-        >
-          <MapIcon />
-          Mapa
-        </NavLink>
         
-        {/* 🎯 Botão de Toggle Tela Cheia */}
+        {/* 🎯 Botão de Toggle Tela Cheia (MOVIDO PARA O INÍCIO) */}
         <button
           onClick={toggleInterfaceMode}
           className="nav-link interface-toggle-button"
@@ -227,16 +217,16 @@ const Header = ({
         >
           {interfaceMode === 'sidebar' ? <FullscreenEnterIcon /> : <FullscreenExitIcon />}
         </button>
-
-        {/* 📊 Link para Dados */}
+        
+        {/* 🗺️ Link para o Mapa */}
         <NavLink 
-          to="/data" 
+          to="/" 
           className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
-          title="Visualizar Dados e Análises"
-          aria-label="Ir para Dados"
+          title="Visualizar Mapa Interativo"
+          aria-label="Ir para Mapa"
         >
-          <DataIcon />
-          Dados
+          <MapIcon />
+          Mapa
         </NavLink>
         
         {/* 📈 Link para Dashboard */}
