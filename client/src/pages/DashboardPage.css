@@ -5,255 +5,266 @@
 /* --- Cabeçalho e Título --- */
 /* ------------------------------------- */
 .dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid var(--borda-suave); 
-  padding-bottom: 1.5rem;
-  gap: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--borda-suave); 
+    padding-bottom: 1.5rem;
+    gap: 1.5rem;
 }
 
 .dashboard-header .title-block {
-  flex: 1;
+    flex: 1;
 }
 
 .dashboard-header .title-block p {
-  font-size: 1.05rem;
-  color: var(--texto-cinza);
-  margin-top: 0;
-  max-width: 600px;
+    font-size: 1.05rem;
+    color: var(--texto-cinza);
+    margin-top: 0;
+    max-width: 600px;
 }
 
 /* ------------------------------------- */
 /* --- LEGENDA NDVI / EVI COM ÍCONES --- */
 /* ------------------------------------- */
 .index-legend {
-  background: var(--fundo-caixa, #f5f5f5);
-  border-left: 4px solid var(--cor-primaria);
-  padding: 12px 16px;
-  margin-top: 14px;
-  border-radius: var(--raio-borda);
-  box-shadow: var(--sombra-suave);
-  font-size: 0.95rem;
-  color: var(--texto-cinza);
-  line-height: 1.45;
+    background: var(--fundo-caixa, #f5f5f5);
+    border-left: 4px solid var(--cor-primaria);
+    padding: 12px 16px;
+    margin-top: 14px;
+    border-radius: var(--raio-borda);
+    box-shadow: var(--sombra-suave);
+    font-size: 0.95rem;
+    color: var(--texto-cinza);
+    line-height: 1.45;
 }
 
 .index-legend p {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0;
 }
 
 /* Ícones padrão */
 .index-legend .legend-icon {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
 }
 
 /* Ícone NDVI (vermelho) */
 .index-legend .ndvi-icon {
-  background-color: #d64545;
+    background-color: #d64545;
 }
 
 /* Ícone EVI (verde) */
 .index-legend .evi-icon {
-  background-color: #2e8b57;
+    background-color: #2e8b57;
 }
 
 .index-legend strong {
-  color: var(--cor-primaria-dark);
-  font-weight: 700;
+    color: var(--cor-primaria-dark);
+    font-weight: 700;
 }
 
 /* ------------------------------------- */
-/* --- Botão de Exportar --- */
+/* --- Botões de Exportar --- */
 /* ------------------------------------- */
 .export-controls {
-  flex-shrink: 0;
-  margin-top: 4px;
+    flex-shrink: 0;
+    margin-top: 4px;
+    display: flex; /* Adicionado para alinhar os botões lado a lado */
+    gap: 10px; /* Adicionado espaço entre os botões */
 }
 
-.export-pdf-button {
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--branco);
-  background-color: var(--cor-realce);
-  border: 2px solid var(--cor-realce);
-  border-radius: var(--raio-borda);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: var(--sombra-suave);
-  text-shadow: none;
+/* Estilo Base Comum para PDF e CSV */
+.export-pdf-button,
+.export-csv-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--branco);
+    background-color: var(--cor-realce);
+    border: 2px solid var(--cor-realce);
+    border-radius: var(--raio-borda);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--sombra-suave);
+    text-shadow: none;
+    white-space: nowrap;
 }
 
-.export-pdf-button:hover:not(:disabled) {
-  background-color: var(--cor-realce-hover);
-  border-color: var(--cor-realce-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+.export-pdf-button:hover:not(:disabled), 
+.export-csv-button:hover:not(:disabled) {
+    background-color: var(--cor-realce-hover);
+    border-color: var(--cor-realce-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }
 
-.export-pdf-button:disabled {
-  background-color: #ccc;
-  color: #777;
-  border-color: #ccc;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-  text-shadow: none;
+.export-pdf-button:disabled,
+.export-csv-button:disabled {
+    background-color: #ccc;
+    color: #777;
+    border-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    text-shadow: none;
 }
 
 /* ------------------------------------- */
 /* --- Grid de Gráficos --- */
 /* ------------------------------------- */
 .chart-grid-item-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .chart-container:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 96, 100, 0.15);
-  border-color: var(--cor-primaria);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 96, 100, 0.15);
+    border-color: var(--cor-primaria);
 }
 
 .chart-click-area {
-  flex-grow: 1;
-  padding: 1rem;
-  box-sizing: border-box;
-  background-color: var(--branco);
+    flex-grow: 1;
+    padding: 1rem;
+    box-sizing: border-box;
+    background-color: var(--branco);
 }
 
 .chart-click-area > div {
-  width: 100%;
-  height: 100%;
-  position: relative;
+    width: 100%;
+    height: 100%;
+    position: relative;
 }
 
 /* ------------------------------------- */
 /* --- Botão de Seleção — WTSS --- */
 /* ------------------------------------- */
 .chart-select-button {
-  display: block;
-  width: 100%;
-  padding: 10px 15px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-radius: var(--raio-borda);
-  cursor: pointer;
-  transition: all 0.2s ease;
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: var(--raio-borda);
+    cursor: pointer;
+    transition: all 0.2s ease;
 
-  background-color: var(--fundo-sidebar);
-  border: 2px solid var(--fundo-sidebar);
-  color: var(--cor-primaria-dark);
+    background-color: var(--fundo-sidebar);
+    border: 2px solid var(--fundo-sidebar);
+    color: var(--cor-primaria-dark);
 }
 
 .chart-select-button:hover {
-  background-color: var(--cor-primaria);
-  border-color: var(--cor-primaria);
-  color: var(--branco);
+    background-color: var(--cor-primaria);
+    border-color: var(--cor-primaria);
+    color: var(--branco);
 }
 
 .chart-select-button.selected {
-  background-color: var(--cor-realce);
-  color: var(--branco);
-  border-color: var(--cor-realce);
-  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+    background-color: var(--cor-realce);
+    color: var(--branco);
+    border-color: var(--cor-realce);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
 }
 
 /* ------------------------------------- */
 /* --- Modal de Visualização --- */
 /* ------------------------------------- */
 .dashboard-modal-overlay {
-  position: fixed; 
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000; 
-  padding: 2rem;
-  box-sizing: border-box;
-  animation: fadeIn 0.3s ease;
+    position: fixed; 
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; 
+    padding: 2rem;
+    box-sizing: border-box;
+    animation: fadeIn 0.3s ease;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .dashboard-modal-content {
-  background-color: var(--branco);
-  border-radius: var(--raio-borda);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  padding: 2rem;
-  position: relative;
-  width: 90vw; 
-  height: 85vh; 
-  max-width: 1400px;
-  display: flex;
-  flex-direction: column;
-  animation: slideUp 0.3s ease-out;
+    background-color: var(--branco);
+    border-radius: var(--raio-borda);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    position: relative;
+    width: 90vw; 
+    height: 85vh; 
+    max-width: 1400px;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s ease-out;
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .dashboard-modal-close {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: none;
-  border: none;
-  font-size: 2.5rem;
-  color: #888;
-  cursor: pointer;
-  transition: color 0.2s;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2.5rem;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s;
 }
 
 .dashboard-modal-close:hover {
-  color: var(--cor-erro, #E53935);
+    color: var(--cor-erro, #E53935);
 }
 
 .dashboard-modal-chart-container {
-  flex-grow: 1; 
-  position: relative;
-  width: 100%;
-  height: 100%;
+    flex-grow: 1; 
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 /* ------------------------------------- */
 /* --- Responsividade --- */
 /* ------------------------------------- */
 @media (max-width: 768px) {
-  .page-container {
-    padding: 16px;
-  }
-  .charts-grid {
-    gap: 20px;
-  }
-  .dashboard-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .export-controls {
-    width: 100%;
-  }
-  .export-pdf-button {
-    width: 100%;
-  }
+    .page-container {
+        padding: 16px;
+    }
+    .charts-grid {
+        gap: 20px;
+    }
+    .dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .export-controls {
+        width: 100%;
+        /* Ajuste para que os botões se expandam em telas menores */
+        flex-direction: column;
+        gap: 10px;
+    }
+    .export-pdf-button,
+    .export-csv-button { /* Aplica o ajuste de largura total a ambos */
+        width: 100%;
+    }
 }

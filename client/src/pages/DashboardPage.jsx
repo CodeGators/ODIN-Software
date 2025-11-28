@@ -96,7 +96,9 @@ const processTimeseries = (tsObject, stacResults) => {
                 return {
                     x: new Date(originalDate).toLocaleDateString(),
                     y: cleanValue, 
-                    thumbnail: findClosestStacThumbnail(originalDate, stacResults)
+                    thumbnail: findClosestStacThumbnail(originalDate, stacResults),
+                    originalDate: originalDate, // Adiciona data original para exportação CSV
+                    originalValue: v // Adiciona valor original para exportação CSV (antes da escala)
                 };
             });
 
@@ -112,7 +114,13 @@ const processTimeseries = (tsObject, stacResults) => {
         }).filter(Boolean); 
 
         if (datasets.length === 0) return null;
-        return { labels, datasets }; 
+        return { 
+            labels, 
+            datasets, 
+            timeline: wtssResult.timeline, // Adiciona timeline original para CSV
+            attributes: wtssResult.attributes, // Adiciona attributes original para CSV
+            collectionId: wtssCollectionId // Adiciona collectionId
+        }; 
 
     } catch (e) {
         console.error(`Erro CRÍTICO ao processar dados WTSS para ${wtssCollectionId}:`, e, tsObject);
@@ -219,10 +227,14 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
 
     const chartsToRender = useMemo(() => {
         if (!Array.isArray(timeseriesData)) return [];
-        return timeseriesData.map(tsObject => ({
-            id: tsObject.coverage,
-            chartData: processTimeseries(tsObject, searchResults) 
-        })).filter(c => c.chartData !== null); 
+        return timeseriesData.map(tsObject => {
+            const chartData = processTimeseries(tsObject, searchResults);
+            return {
+                id: tsObject.coverage,
+                chartData: chartData,
+                fullData: tsObject 
+            };
+        }).filter(c => c.chartData !== null); 
     }, [timeseriesData, searchResults]); 
 
     const closeModal = () => setSelectedChartData(null);
@@ -235,8 +247,78 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
         });
     };
 
+    /**
+     * @function handleExportToCSV
+     * @description Exporta as séries temporais selecionadas para um arquivo CSV (separador: vírgula).
+     */
+    const handleExportToCSV = () => {
+        if (selectedCharts.size === 0) {
+            alert("Por favor, selecione pelo menos um gráfico para exportar.");
+            return;
+        }
 
-    // --- Exportar PDF ---
+        const selectedTS = chartsToRender.filter(c => selectedCharts.has(c.id));
+        if (selectedTS.length === 0) return;
+
+        let csvContent = "";
+        const separator = ","; // Alterado para vírgula
+
+        // Adiciona as coordenadas se estiverem disponíveis
+        if (selectedCoords) {
+            csvContent += `Coordenadas${separator}Lat: ${selectedCoords.lat.toFixed(6)}${separator}Lng: ${selectedCoords.lng.toFixed(6)}\n\n`;
+        }
+
+        selectedTS.forEach(ts => {
+            const { collectionId, timeline, attributes } = ts.chartData;
+            
+            // Título/Coleção
+            csvContent += `Coleção WTSS${separator}${collectionId}\n`;
+            
+            // Cabeçalho: Data + todos os atributos
+            const header = ["Data"].concat(attributes.map(a => a.attribute)).join(separator);
+            csvContent += `${header}\n`;
+
+            // Linhas de dados
+            timeline.forEach((dateStr, index) => {
+                let row = [dateStr];
+                
+                attributes.forEach(attr => {
+                    // Usa o valor original (sem escala) ou o valor limpo se a escala não for necessária
+                    const rawValue = attr.values[index];
+                    const attrName = attr.attribute;
+                    const needsScaling = ['NDVI', 'EVI'].includes(attrName);
+                    
+                    let value = rawValue;
+                    
+                    // Lógica de limpeza e escala (duplicada da função processTimeseries para garantir consistência)
+                    if (rawValue === null || rawValue === undefined || rawValue <= -3000) {
+                        value = ''; // Representa NULL/NoData como string vazia no CSV
+                    } else if (needsScaling) {
+                        value = (rawValue / 10000).toFixed(4); // Mantém a precisão para exportação
+                    }
+                    
+                    row.push(value);
+                });
+
+                csvContent += row.join(separator) + "\n"; // Alterado para usar o separador de vírgula
+            });
+
+            csvContent += "\n"; // Linha vazia entre as séries temporais
+        });
+
+        // Cria e baixa o arquivo CSV
+        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' }); 
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'series-temporais-export.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+
+    // --- Exportar PDF (manter a função original) ---
     const handleExportToPDF = async () => {
         if (selectedCharts.size === 0) {
             alert("Por favor, selecione pelo menos um gráfico para exportar.");
@@ -332,12 +414,22 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
                 </div>
 
                 <div className="export-controls">
+                    {/* NOVO BOTÃO CSV (Corrigido para usar vírgula como separador) */}
+                    <button 
+                        onClick={handleExportToCSV}
+                        disabled={selectedCharts.size === 0}
+                        className="export-csv-button"
+                        style={{ marginRight: '10px' }} 
+                    >
+                        Exportar CSV
+                    </button>
+                    {/* BOTÃO PDF ORIGINAL */}
                     <button 
                         onClick={handleExportToPDF}
                         disabled={isExporting || selectedCharts.size === 0}
                         className="export-pdf-button"
                     >
-                        {isExporting ? "Exportando..." : `Exportar ${selectedCharts.size} Gráfico(s)`}
+                        {isExporting ? "Exportando PDF..." : `Exportar ${selectedCharts.size} Gráfico(s) (PDF)`}
                     </button>
                 </div>
             </div>
