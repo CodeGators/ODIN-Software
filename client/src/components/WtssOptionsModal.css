@@ -1,0 +1,83 @@
+.wtss-config-container {
+    padding: 10px;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .wtss-config-container h3 {
+    color: var(--cor-primaria-dark);
+    margin-bottom: 5px;
+  }
+  
+  .wtss-subtitle {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+  }
+  
+  .wtss-attributes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 25px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .wtss-attr-card {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f9f9f9;
+  }
+  
+  .wtss-attr-card:hover {
+    border-color: var(--cor-primaria);
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+  
+  .wtss-attr-card.selected {
+    border-color: var(--cor-primaria);
+    background-color: var(--fundo-sidebar); /* Azul claro do tema */
+    font-weight: 600;
+    color: var(--cor-primaria-dark);
+  }
+  
+  .wtss-attr-card input {
+    margin-right: 10px;
+    accent-color: var(--cor-primaria);
+    transform: scale(1.2);
+  }
+  
+  .wtss-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+  
+  .wtss-confirm-btn {
+    background-color: var(--cor-realce);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .wtss-confirm-btn:hover {
+    background-color: var(--cor-realce-hover);
+  }

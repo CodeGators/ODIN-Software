@@ -69,12 +69,11 @@ function findClosestStacThumbnail(wtssDateStr, stacResults) {
     }
 }
 
-
-
 // --- Processamento de séries temporais ---
 const processTimeseries = (tsObject, stacResults) => { 
     const wtssCollectionId = tsObject?.coverage;
     const wtssResult = tsObject?.data?.result;
+    
     if (!wtssCollectionId || !wtssResult?.timeline || !Array.isArray(wtssResult.attributes) || wtssResult.attributes.length === 0) return null;
     
     try {
@@ -97,8 +96,8 @@ const processTimeseries = (tsObject, stacResults) => {
                     x: new Date(originalDate).toLocaleDateString(),
                     y: cleanValue, 
                     thumbnail: findClosestStacThumbnail(originalDate, stacResults),
-                    originalDate: originalDate, // Adiciona data original para exportação CSV
-                    originalValue: v // Adiciona valor original para exportação CSV (antes da escala)
+                    originalDate: originalDate,
+                    originalValue: v
                 };
             });
 
@@ -117,9 +116,9 @@ const processTimeseries = (tsObject, stacResults) => {
         return { 
             labels, 
             datasets, 
-            timeline: wtssResult.timeline, // Adiciona timeline original para CSV
-            attributes: wtssResult.attributes, // Adiciona attributes original para CSV
-            collectionId: wtssCollectionId // Adiciona collectionId
+            timeline: wtssResult.timeline, 
+            attributes: wtssResult.attributes, 
+            collectionId: wtssCollectionId 
         }; 
 
     } catch (e) {
@@ -130,8 +129,9 @@ const processTimeseries = (tsObject, stacResults) => {
 
 
 // --- Configurações do gráfico ---
-const getChartOptions = (collectionId) => {
+const getChartOptions = (collectionId, onOpenModal, showThumbnails = false) => {
 
+    // --- Tooltip Customizado (Apenas para o Modal/Popup) ---
     const getOrCreateTooltip = (chart) => {
         let tooltipEl = chart.canvas.parentNode.querySelector('div.chartjs-tooltip');
         if (!tooltipEl) {
@@ -139,7 +139,7 @@ const getChartOptions = (collectionId) => {
             tooltipEl.className = 'chartjs-tooltip'; 
             tooltipEl.style.opacity = '0';
             tooltipEl.style.position = 'absolute'; 
-            tooltipEl.style.background = 'rgba(0,0,0,0.85)';
+            tooltipEl.style.background = 'rgba(0,0,0,0.85)'; // A tal "caixa preta"
             tooltipEl.style.color = 'white';
             tooltipEl.style.borderRadius = '5px';
             tooltipEl.style.padding = '10px';
@@ -178,10 +178,13 @@ const getChartOptions = (collectionId) => {
             </div>
         `;
         
-        if (dataPoint.thumbnail) {
-            innerHtml += `<img src="${dataPoint.thumbnail}" alt="Thumbnail" style="width: 150px; height: auto; border-radius: 3px; display: block;" />`;
-        } else {
-            innerHtml += `<span style="font-size: 0.8rem; color: #ccc;">(Sem thumbnail próxima)</span>`;
+        // Renderiza a thumbnail apenas se showThumbnails for true (no Popup)
+        if (showThumbnails) {
+            if (dataPoint.thumbnail) {
+                innerHtml += `<img src="${dataPoint.thumbnail}" alt="Thumbnail" style="width: 150px; height: auto; border-radius: 3px; display: block;" />`;
+            } else {
+                innerHtml += `<span style="font-size: 0.8rem; color: #ccc;">(Sem thumbnail próxima)</span>`;
+            }
         }
 
         tooltipEl.innerHTML = innerHtml;
@@ -196,20 +199,41 @@ const getChartOptions = (collectionId) => {
     return {
         responsive: true,
         maintainAspectRatio: false,
+        onClick: (event, elements, chart) => {
+            const legend = chart.legend;
+            if (legend) {
+                const { left, right, top, bottom } = legend;
+                const x = event.x;
+                const y = event.y;
+
+                if (x >= left && x <= right && y >= top && y <= bottom) {
+                    return; 
+                }
+            }
+
+            if (onOpenModal) {
+                onOpenModal();
+            }
+        },
         interaction: {
             mode: 'nearest',
             intersect: false,
         },
         plugins: {
-            legend: { position: 'top' },
+            legend: { 
+                position: 'top',
+            },
             title: {
                 display: true,
                 text: `Série Temporal: ${collectionId}`,
             },
             tooltip: {
-                enabled: false, 
+                // --- LÓGICA CRUCIAL AQUI ---
+                // Se showThumbnails for true (Popup), desabilita o nativo e usa o external (Custom HTML).
+                // Se showThumbnails for false (Dashboard), habilita o nativo e anula o external.
+                enabled: !showThumbnails, 
                 position: 'nearest',
-                external: externalTooltipHandler
+                external: showThumbnails ? externalTooltipHandler : undefined
             }
         }
     };
@@ -247,10 +271,6 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
         });
     };
 
-    /**
-     * @function handleExportToCSV
-     * @description Exporta as séries temporais selecionadas para um arquivo CSV (separador: vírgula).
-     */
     const handleExportToCSV = () => {
         if (selectedCharts.size === 0) {
             alert("Por favor, selecione pelo menos um gráfico para exportar.");
@@ -261,52 +281,39 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
         if (selectedTS.length === 0) return;
 
         let csvContent = "";
-        const separator = ","; // Alterado para vírgula
+        const separator = ","; 
 
-        // Adiciona as coordenadas se estiverem disponíveis
         if (selectedCoords) {
             csvContent += `Coordenadas${separator}Lat: ${selectedCoords.lat.toFixed(6)}${separator}Lng: ${selectedCoords.lng.toFixed(6)}\n\n`;
         }
 
         selectedTS.forEach(ts => {
             const { collectionId, timeline, attributes } = ts.chartData;
-            
-            // Título/Coleção
             csvContent += `Coleção WTSS${separator}${collectionId}\n`;
             
-            // Cabeçalho: Data + todos os atributos
             const header = ["Data"].concat(attributes.map(a => a.attribute)).join(separator);
             csvContent += `${header}\n`;
 
-            // Linhas de dados
             timeline.forEach((dateStr, index) => {
                 let row = [dateStr];
-                
                 attributes.forEach(attr => {
-                    // Usa o valor original (sem escala) ou o valor limpo se a escala não for necessária
                     const rawValue = attr.values[index];
                     const attrName = attr.attribute;
                     const needsScaling = ['NDVI', 'EVI'].includes(attrName);
                     
                     let value = rawValue;
-                    
-                    // Lógica de limpeza e escala (duplicada da função processTimeseries para garantir consistência)
                     if (rawValue === null || rawValue === undefined || rawValue <= -3000) {
-                        value = ''; // Representa NULL/NoData como string vazia no CSV
+                        value = ''; 
                     } else if (needsScaling) {
-                        value = (rawValue / 10000).toFixed(4); // Mantém a precisão para exportação
+                        value = (rawValue / 10000).toFixed(4); 
                     }
-                    
                     row.push(value);
                 });
-
-                csvContent += row.join(separator) + "\n"; // Alterado para usar o separador de vírgula
+                csvContent += row.join(separator) + "\n"; 
             });
-
-            csvContent += "\n"; // Linha vazia entre as séries temporais
+            csvContent += "\n"; 
         });
 
-        // Cria e baixa o arquivo CSV
         const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' }); 
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -318,7 +325,6 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
     };
 
 
-    // --- Exportar PDF (manter a função original) ---
     const handleExportToPDF = async () => {
         if (selectedCharts.size === 0) {
             alert("Por favor, selecione pelo menos um gráfico para exportar.");
@@ -398,7 +404,7 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
                         Passe o mouse nos pontos para ver thumbnails STAC.
                     </p>
 
-                    {/* 🔥 LEGENDA NDVI / EVI — AQUI */}
+                    {/* LEGENDA NDVI / EVI */}
                     <div className="index-legend">
                         <p>
                             <span className="legend-icon ndvi-icon"></span>
@@ -414,7 +420,6 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
                 </div>
 
                 <div className="export-controls">
-                    {/* NOVO BOTÃO CSV (Corrigido para usar vírgula como separador) */}
                     <button 
                         onClick={handleExportToCSV}
                         disabled={selectedCharts.size === 0}
@@ -423,7 +428,6 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
                     >
                         Exportar CSV
                     </button>
-                    {/* BOTÃO PDF ORIGINAL */}
                     <button 
                         onClick={handleExportToPDF}
                         disabled={isExporting || selectedCharts.size === 0}
@@ -458,7 +462,6 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
                             
                             <div
                                 className="chart-container"
-                                onClick={() => setSelectedChartData({ id, chartData })}
                                 style={{ cursor: 'pointer' }}
                             >
                                 <div 
@@ -468,17 +471,41 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
                                 >
                                     <Line 
                                         data={chartData}
-                                        options={getChartOptions(id)}
+                                        options={getChartOptions(id, () => setSelectedChartData({ id, chartData }), false)}
                                     />
                                 </div>
                             </div>
 
-                            <button
-                                className={`chart-select-button ${selected ? "selected" : ""}`}
-                                onClick={() => handleSelectionChange(id)}
-                            >
-                                {selected ? "Selecionado" : `Selecionar ${id}`}
-                            </button>
+                            {/* Container dos botões de ação */}
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                
+                                <button
+                                    className={`chart-select-button ${selected ? "selected" : ""}`}
+                                    onClick={() => handleSelectionChange(id)}
+                                    style={{ flex: 1 }}
+                                >
+                                    {selected ? "Selecionado" : `Selecionar ${id}`}
+                                </button>
+
+                                <button
+                                    className="chart-select-button"
+                                    onClick={() => setSelectedChartData({ id, chartData })}
+                                    style={{ 
+                                        flex: 0.3, 
+                                        backgroundColor: '#546E7A', 
+                                        borderColor: '#546E7A',
+                                        color: 'white',
+                                        minWidth: '80px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}
+                                    title="Expandir Gráfico"
+                                >
+                                    <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>⤢</span>
+                                </button>
+                            </div>
+
                         </div>
                     );
                 })}
@@ -497,7 +524,9 @@ const DashboardPage = ({ timeseriesData = [], selectedCoords, searchResults = []
                         <div className="dashboard-modal-chart-container">
                             <Line 
                                 data={selectedChartData.chartData}
-                                options={getChartOptions(selectedChartData.id)}
+                                // --- AQUI: Passamos showThumbnails = true ---
+                                // No popup, queremos o tooltip customizado (caixa preta) com a imagem
+                                options={getChartOptions(selectedChartData.id, null, true)}
                             />
                         </div>
                     </div>
